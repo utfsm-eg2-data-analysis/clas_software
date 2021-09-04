@@ -1,0 +1,1 @@
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/libpatches.a(atand.o) ./depends/Linux64RHEL7/atand.d: 

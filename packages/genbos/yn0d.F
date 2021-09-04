@@ -1,0 +1,821 @@
+      SUBROUTINE READ1
+      COMMON/BRPP/BREZPP,IREZPP,NLINPP
+      COMMON/BRNP/BREZNP,IREZNP,NLINNP
+      DIMENSION BREZPP(1000),BREZNP(1000)
+      DIMENSION IREZPP(6,1000),IREZNP(6,1000)
+      DIMENSION IREAD(6)
+         CHARACTER*7 HNUMBER,H7
+         CHARACTER*73 LINE
+         CHARACTER*33 SYMB33
+         CHARACTER*1 SGN
+         CHARACTER*29 SYMB29
+         CHARACTER*80 FNP,FNN,PPP,PPN,PNN
+
+         READ 64,FNP
+         READ 64,FNN
+         READ 64,PPP
+         READ 64,PPN
+         READ 64,PNN
+ 64      FORMAT (1X,A80)
+
+         OPEN(UNIT=8,FILE=FNP,STATUS='OLD')
+         OPEN(UNIT=9,FILE=FNN,STATUS='OLD')
+C
+            DATA HNUMBER/' NUMBER'/
+      DO 100 K=1,100
+            READ(8,101) H7,LINE
+ 101        FORMAT(A7,A73)
+        IF(H7.EQ.HNUMBER) GOTO 102
+ 100  CONTINUE
+ 102                    NLREAD1=0
+      DO 103 K=1,1000
+      READ(8,104,ERR=800,END=801)I,SGN,(IREAD(L),L=1,6),SYMB33,
+     *BREZPP(K)
+                        NLREAD1=K
+         DO 105 M=1,6
+             IREZPP(M,K)=IREAD(M)
+             IF(IREAD(M).EQ.19) IREZPP(M,K)=0
+ 105     CONTINUE
+ 103  CONTINUE
+ 104  FORMAT(I6,A1,6(1X,I3),A33,F6.2)
+           GOTO 801
+ 800  PRINT 106, NLREAD1
+ 106  FORMAT(' ERROR DURING READING FROM FILE N<7, NLREAD1=',I8)
+           STOP
+ 801  PRINT 107, NLREAD1
+ 107  FORMAT(' EOF MARK, NLREAD1=',I8)
+C
+                  NLINPP=NLREAD1
+      SUMPP=0.
+        DO  I=1,NLINPP
+           SUMPP=SUMPP+BREZPP(I)
+           BREZPP(I)=SUMPP
+        END DO
+        DO  I=1,NLINPP
+           BREZPP(I)=BREZPP(I)/BREZPP(NLINPP)
+        END DO
+C
+C   FOR ANTIP - N  AND ANTIN - P
+      DO 300 K=1,100
+            READ(9,101) H7,LINE
+        IF(H7.EQ.HNUMBER) GOTO 302
+ 300  CONTINUE
+ 302                    NLREAD1=0
+      DO 303 K=1,1000
+      READ(9,104,ERR=800,END=301)I,SGN,(IREAD(L),L=1,6),SYMB33,
+     *BREZNP(K)
+                        NLREAD1=K
+         DO 305 M=1,6
+             IREZNP(M,K)=IREAD(M)
+             IF(IREAD(M).EQ.19) IREZNP(M,K)=0
+ 305     CONTINUE
+ 303  CONTINUE
+           GOTO 301
+ 301  PRINT 107, NLREAD1
+C
+                  NLINNP=NLREAD1
+      SUMNP=0.
+        DO  I=1,NLINNP
+           SUMNP=SUMNP+BREZNP(I)
+           BREZNP(I)=SUMNP
+        END DO
+        DO  I=1,NLINNP
+           BREZNP(I)=BREZNP(I)/BREZNP(NLINNP)
+        END DO
+C
+       CLOSE(8)
+       CLOSE(9)
+       RETURN
+       END
+
+
+      SUBROUTINE READ2
+      COMMON/BR2PP/BREPP,IREPP,NL2PP
+      COMMON/BR2NP/BRENP,IRENP,NL2NP
+      COMMON/BR2NN/BRENN,IRENN,NL2NN
+      DIMENSION BREPP(1000),BRENP(1000),BRENN(1000)
+      DIMENSION IREPP(6,1000),IRENP(6,1000),IRENN(6,1000)
+      DIMENSION IREAD(6)
+         CHARACTER*7 HNUMBER,H7
+         CHARACTER*73 LINE
+         CHARACTER*33 SYMB33
+         CHARACTER*1 SGN
+         CHARACTER*29 SYMB29
+         CHARACTER*80 FNP,FNN,PPP,PPN,PNN
+
+         READ 64,FNP
+         READ 64,FNN
+         READ 64,PPP
+         READ 64,PPN
+         READ 64,PNN
+ 64      FORMAT (1X,A80)
+
+         OPEN(UNIT=8,FILE=PPP,STATUS='OLD')
+         OPEN(UNIT=9,FILE=PPN,STATUS='OLD')
+         OPEN(UNIT=10,FILE=PNN,STATUS='OLD')
+C
+            DATA HNUMBER/' NUMBER'/
+C   FOR ANTIP - P P
+      DO 100 K=1,100
+            READ(8,101) H7,LINE
+ 101        FORMAT(A7,A73)
+            WRITE(11,99) H7,LINE
+  99        FORMAT(' ',A7,A73)
+        IF(H7.EQ.HNUMBER) GOTO 102
+ 100  CONTINUE
+ 102                    NLREAD1=0
+      DO 103 K=1,1000
+      READ(8,104,ERR=800,END=801),I,SGN,(IREAD(L),L=1,6),SYMB33,
+     *BREPP(K)
+ 104  FORMAT(I6,A1,6(1X,I3),A33,F6.2)
+      WRITE (11,550),(IREAD(L),L=1,6),BREPP(K)
+ 550  FORMAT(3X,6(1X,I3),F6.3)
+      WRITE (11,104),I,SGN,(IREAD(L),L=1,6),SYMB33,BREPP(K)
+                        NLREAD1=K
+         DO 105 M=1,6
+             IREPP(M,K)=IREAD(M)
+             IF(IREAD(M).EQ.19) IREPP(M,K)=0
+ 105     CONTINUE
+ 103  CONTINUE
+           GOTO 801
+ 800  WRITE(11,106) NLREAD1
+ 106  FORMAT(' ERROR DURING READING FROM FILE N<7, NLREAD1=',I8)
+           STOP
+ 801  WRITE(11,107) NLREAD1
+ 107  FORMAT(' EOF MARK, NLREAD1=',I8)
+C
+                  NL2PP=NLREAD1
+      PRINT *,'NL2PP',NL2PP
+C
+      SUM=0.0
+          DO I=1,NL2PP
+              SUM=SUM+BREPP(I)
+              BREPP(I)=SUM
+          END DO
+               WRITE(11,204) BREPP(NL2PP)
+ 204           FORMAT('   TOTAL SUM BR FROM INPUT FILES, SUM=',F8.3) 
+          DO I=1,NL2PP
+              BREPP(I)=BREPP(I)/BREPP(NL2PP)
+          END DO
+C
+C   FOR ANTIP - N P
+      DO 200 K=1,100
+            READ(9,101) H7,LINE
+            WRITE(11,99) H7,LINE
+        IF(H7.EQ.HNUMBER) GOTO 202
+ 200  CONTINUE
+ 202                    NLREAD1=0
+      DO 203 K=1,1000
+      READ(9,104,ERR=800,END=201),I,SGN,(IREAD(L),L=1,6),SYMB33,
+     *BRENP(K)
+      WRITE (11,104),I,SGN,(IREAD(L),L=1,6),SYMB33,BRENP(K)
+                        NLREAD1=K
+         DO 205 M=1,6
+             IRENP(M,K)=IREAD(M)
+             IF(IREAD(M).EQ.19) IRENP(M,K)=0
+ 205     CONTINUE
+ 203  CONTINUE
+           GOTO 201
+ 201  WRITE(11,107) NLREAD1
+C
+                  NL2NP=NLREAD1
+      PRINT *,'NL2NP',NL2NP
+C
+C
+      SUM=0.0
+          DO I=1,NL2NP
+              SUM=SUM+BRENP(I)
+              BRENP(I)=SUM
+          END DO
+               WRITE(11,204) BRENP(NL2NP)
+          DO I=1,NL2NP
+              BRENP(I)=BRENP(I)/BRENP(NL2NP)
+          END DO
+C
+C   FOR ANTIP - N N
+      DO 300 K=1,100
+            READ(10,101) H7,LINE
+            WRITE(11,99) H7,LINE
+        IF(H7.EQ.HNUMBER) GOTO 302
+ 300  CONTINUE
+ 302                    NLREAD1=0
+      DO 303 K=1,1000
+      READ(10,104,ERR=800,END=301),I,SGN,(IREAD(L),L=1,6),SYMB33,
+     *BRENN(K)
+      WRITE (11,104),I,SGN,(IREAD(L),L=1,6),SYMB33,BRENN(K)
+                        NLREAD1=K
+         DO 305 M=1,6
+             IRENN(M,K)=IREAD(M)
+             IF(IREAD(M).EQ.19) IRENN(M,K)=0
+ 305     CONTINUE
+ 303  CONTINUE
+           GOTO 301
+ 301  WRITE(11,107) NLREAD1
+C
+                  NL2NN=NLREAD1
+      PRINT *,'NL2NN',NL2NN
+C
+C
+      SUM=0.0
+          DO I=1,NL2NN
+              SUM=SUM+BRENN(I)
+              BRENN(I)=SUM
+          END DO
+               WRITE(11,204) BRENN(NL2NN)
+          DO I=1,NL2NN
+              BRENN(I)=BRENN(I)/BRENN(NL2NN)
+          END DO
+C
+       CLOSE(8)
+       CLOSE(9)
+       CLOSE(10)
+       RETURN
+       END
+
+
+      SUBROUTINE ZONA(OBR)
+      COMMON/IRES/IRES,IAN
+      COMMON/IH/IH,NPROS
+      COMMON/DELTAE/DELTA,DLAM,PDESQ,ITR
+      COMMON/PABSR/RMED,SIGMAR
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM(10),RBIG(10),RHOP(10),
+     *RHON(10),AF(10),TFP(10),TFN(10)
+     */SIG0/ SIGOM
+     */BEGIN/CM0,T0,T1,T2,ME0,MQ0,MS0,L0
+      COMMON /GAM_CAS/GAM_CAS
+      COMMON /TOT_CS_NORM/FRASCATI
+      DIMENSION CC(13),ZZ(13),RU(10),A(10)
+      DIMENSION GAM_ENER(33), GAM_CS(33)
+      LOGICAL GAM_CAS,FRASCATI
+      DOUBLE PRECISION GPTOT,GNTOT
+      DATA CC/0.,1.3,4.7470,2.1448,2.4385,
+     *2.0403,2.1391,2.4428,2.8485,3.085,
+     *2.9484,3.0457,3.0305/
+      DATA ZZ/0.,1.494,11*2.3/
+      DATA A/0.9,0.2,0.01,7*0./
+      DATA GAM_ENER/
+     #0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.325,0.35, 0.40,
+     #0.45, 0.475,0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 
+     #0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15, 1.20, 1.30, 
+     #1.40, 1.60, 3.00, 4.00,10.00,20.00/
+      DATA GAM_CS/
+     #0.080,0.065,0.093,0.174,0.292,0.394,0.419,0.419,0.369,
+     #0.309,0.284,0.267,0.233,0.216,0.203,0.191,0.186,0.178,
+     #0.174,0.169,0.165,0.161,0.157,0.150,0.146,0.144,0.1439,
+     #0.1423,0.1395,0.1215,0.1130,0.1100,0.1106/
+      
+      AL=ANUCL
+      IZ=ZNUCL
+      RMAX=10.
+      BN=0.5227
+
+      CALL BOOK_FERMI
+C
+      A1=AL**(1./3.)
+      C=1.146*A1-0.787/A1+0.122/(A1**5)
+      IF(IZ.LE.13)C=CC(IZ)
+      IF(IZ.EQ.2) BN=ZZ(2)/4.4
+      R0N=C/A1
+      IF(IRES)1,4,2
+C                   ABSORPTION OF ANTIPROTON
+  1   RMED=C+1.20
+      SIGMAR=1.
+      PRINT 100,R0N,BN,C,RMED,SIGMAR
+ 100  FORMAT(/20X,'ABSORPTION OF ANTIPROTON'/2X,'R0N=',F6.4,5X,
+     *'BN=',F6.4,5X,'C=',F6.4,5X,'RMED=',F6.4,5X,'SIGMAR=',F6.4)
+      GO TO 3
+C                    ABSORPTION OF PI-
+  2   RMED=C
+      SIGMAR=0.64
+      PRINT 101,R0N,BN,RMED,SIGMAR
+ 101  FORMAT(/20X,'ABSORPTION OF PI-'/2X,'R0N=',F6.4,5X,'RN=',F6.4,
+     *5X,'C=RMED=',F6.4,5X,'SIGMAR=',F6.4)
+      GO TO 3
+C
+  4   PRINT 103,R0N,C,BN
+ 103  FORMAT(/20X,'CASCAD WITH T0>0'/2X,'R0N=',F6.4,5X,'C=',F6.4,5X,
+     *'BN=',F6.4)
+      GO TO 3
+C
+  3   IF(N.EQ.7) GO TO 50
+      IF(N.EQ.1) GO TO 57
+      IF(N.EQ.3) GO TO 57
+      PRINT 52,N
+   52 FORMAT(10X,'N=',I10,'STOP'/)
+      STOP
+   50 CONTINUE
+C   FOR  7 ZONES
+      IF(IZ.LE.13)GOTO 55
+      RU(1)=C-2.5
+      RU(2)=RU(1)+1.25
+      RU(3)=RU(2)+0.625
+      RU(4)=RU(3)+0.625
+      RU(5)=RU(4)+0.625
+      RU(6)=RU(5)+0.625
+      RU(7)=C+2.5
+      GO TO 56
+   55 CONTINUE
+      IF(IZ.EQ.2 ) ST=0.35
+      IF(IZ.EQ.3 ) ST=0.625
+      IF(IZ.GE.4 ) ST=0.6
+      RU(1)=(C-2.*ST)/2.
+      RU(2)=RU(1)*2.
+      RU(3)=RU(2)+ST
+      RU(4)=RU(3)+ST
+      RU(5)=RU(4)+ST
+      RU(6)=RU(5)+ST
+      RU(7)=RU(6)+2.*ST
+   56 CONTINUE
+      DO 54 I=1,N
+      A(I)=1./(1.+EXP((RU(I)-C)/BN))
+   54 CONTINUE
+   57 CONTINUE
+      CALL HELP(A,R0N,RMAX,BN)
+      IF(IRES) 60,61,61
+C
+   60 RSM(N+1)=20.
+      RSM(N+2)=25.
+      RHOP(N+1)=RHOP(N)*0.001
+      RHON(N+1)=RHON(N)*0.001
+      RBIG(N+1)=RSM(N+1)/RSM(N)
+      RBIG(N+2)=RSM(N+2)/RSM(N)
+      TFP(N+1)=TFP(N)
+      TFN(N+1)=TFN(N)
+      GO TO 62
+   61 IF(IH.NE.2) GO TO 62
+      NPROS=0
+      RHOP(N+1)=RHOP(N)*0.00001
+      RHON(N+1)=RHON(N)*0.00001
+      RSM(N+1)=RSM(N)+DELTA+DLAM+4.416
+      RBIG(N+1)=RSM(N+1)/RSM(N)
+      IF(ITR.EQ.1) GO TO 611
+      RSM(N+2)=RSM(N+1)+0.1
+      RBIG(N+2)=RSM(N+2)/RSM(N)
+  611 TFP(N+1)=TFP(N)
+      TFN(N+1)=TFN(N)
+      PRINT *,' ITR=',ITR,' DELTA=',DELTA,' DLAM=',DLAM
+      PRINT *,' IH=',IH,' RSM(N+1)=',RSM(N+1),' RSM(N+2)=',RSM(N+2)
+      GO TO 62
+  62  OBR=AF(N)/2.
+      IF(.NOT.GAM_CAS) THEN
+            SIGOM=31.4159*RSM(N)**2
+            PRINT 205,SIGOM,OBR
+  205       FORMAT (/19X,'GEOMETRICAL CROSS SECTION = ',F13.6,' MB'/
+     #      20X,'OBR=',F13.6,' GEV'/)
+      ELSE
+         IF(T0.GT.0.) THEN        
+           IF((T0.LE.4.).AND.(.NOT.FRASCATI)) THEN
+      CON_LEVINGER=6.8-11.2/ANUCL**(2./3.)+5.7/ANUCL**(4./3.)
+             SIGOM=(ZNUCL*SNGL(GPTOT(DBLE(T0)))+
+     #                (ANUCL-ZNUCL)*SNGL(GNTOT(DBLE(T0))))/1000.+
+     #  CON_LEVINGER*((ANUCL-ZNUCL)*ZNUCL/ANUCL)*GDABS(T0)/1000.
+             PRINT 208
+  208    FORMAT(/10X,'TERRANOVA&TAVARES FORMULA'/)
+           ELSE
+             SIGOM=ALI(T0,GAM_ENER,GAM_CS,33)*ANUCL
+             PRINT 209
+  209    FORMAT(/10X,'FRASCATI DATA FOR TOTAL CROSS SECTION'/)
+           ENDIF
+        PRINT 206,SIGOM,OBR
+  206    FORMAT(/19X,'PHOTOABSORPTION CROSS SECTION = ',F13.6,' MB'/
+     #      20X,'OBR=',F13.6,' GEV'/)
+         ELSE
+             POINT_MID=(T1+T2)/2.
+           IF((POINT_MID.LE.4.).AND.(.NOT.FRASCATI)) THEN
+      CON_LEVINGER=6.8-11.2/ANUCL**(2./3.)+5.7/ANUCL**(4./3.)
+             SIGOM=(ZNUCL*SNGL(GPTOT(DBLE(POINT_MID)))+
+     #          (ANUCL-ZNUCL)*SNGL(GNTOT(DBLE(POINT_MID))))/1000.+
+     #CON_LEVINGER*((ANUCL-ZNUCL)*ZNUCL/ANUCL)*GDABS(POINT_MID)/1000.
+             PRINT 208
+           ELSE
+             PRINT 209
+             SIGOM=ALI(POINT_MID,GAM_ENER,GAM_CS,33)*ANUCL
+           ENDIF
+         PRINT 207,SIGOM,POINT_MID,OBR
+  207    FORMAT(/19X,'PHOTOABSORPTION CROSS SECTION = ',F13.6,' MB'/
+     #      20X,'(IN THE MIDDLE POINT OF SPECTRUM AT',F13.6,' GEV)'/
+     #      20X,'OBR=',F13.6,' GEV'/)
+         ENDIF       
+      ENDIF
+      DO 15 I=1,10
+      TFN(I)=(ANUCL-ZNUCL)/ANUCL*TFN(I)+ZNUCL/ANUCL*TFP(I)
+      TFP(I)=TFN(I)
+      AF(I)=0.
+  15  CONTINUE
+      RETURN
+      END
+
+
+
+      DOUBLE PRECISION FUNCTION GPTOT(V)
+C
+C    FUNCTION THAT GIVES TOTAL GAMMA PROTON TO HADRONS CS
+C    UP TO 4 GEV  (MICROBARNS)
+C
+      DOUBLE PRECISION V( 1)
+      INTEGER NPAR, NDIM, IMQFUN, I, J
+      DOUBLE PRECISION HQDJ, VV, VCONST
+      DOUBLE PRECISION SIGVMI( 1), SIGVT( 1)
+      DOUBLE PRECISION SIGV(  15, 1)
+      DOUBLE PRECISION SIGDEL(  15)
+      DOUBLE PRECISION SIGA(  15)
+      DATA NPAR, NDIM, IMQFUN /   15,    1,    2/
+      DATA VCONST / 0.1999999955297E-01/
+      DATA SIGVMI / 0.0000000000000E+00/
+      DATA SIGVT /  4.000000000000    /
+      DATA SIGV / 0.3249999880791E-01
+     +, 0.3749999776483E-01
+     +, 0.6250000000000E-01
+     +, 0.7750000059605E-01
+     +, 0.0000000000000E+00
+     +,  1.000000000000    
+     +, 0.9499999880791E-01
+     +, 0.1049999967217    
+     +, 0.1149999946356    
+     +, 0.1700000017881    
+     +, 0.1899999976158    
+     +, 0.2099999934435    
+     +, 0.2299999892712    
+     +, 0.2500000000000    
+     +, 0.2999999821186    
+     +/
+      DATA SIGDEL / 0.8999999612570E-02
+     +, 0.8999999612570E-02
+     +, 0.8999999612570E-02
+     +, 0.8999999612570E-02
+     +, 0.1799999949981E-05
+     +, 0.1799999949981E-05
+     +, 0.1799999922514E-01
+     +, 0.1799999922514E-01
+     +, 0.1799999922514E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.7199999690056E-01
+     +/
+      DATA SIGA / -2786.241225755    
+     +,  1031.294364832    
+     +,  55.19827281741    
+     +, -73.24307924317    
+     +,  1685.717635301    
+     +, -39.90232143520    
+     +,  35.43666860610    
+     +, -28.96142403340    
+     +,  47.70382427775    
+     +,  36.27459368222    
+     +, -136.8029290788    
+     +,  150.0621724472    
+     +, -75.86024699044    
+     +,  15.29861968982    
+     +,  3.693615673975    
+     +/
+      GPTOT = 0.
+      DO 20 J = 1, NPAR
+         HQDJ = 0.
+         DO 10 I = 1, NDIM
+            VV = (V (I) - SIGVMI (I)) / SIGVT (I)
+            HQDJ = HQDJ + (VV - SIGV (J, I)) ** 2
+   10    CONTINUE
+         HQDJ = HQDJ + SIGDEL (J) ** 2
+         HQDJ = SQRT (HQDJ)
+         GPTOT = GPTOT + SIGA (J) * HQDJ
+   20 CONTINUE
+      IF (IMQFUN .EQ. 2) GPTOT = VCONST * EXP (GPTOT)
+      END
+
+
+
+      DOUBLE PRECISION FUNCTION GNTOT(V)
+C
+C    FUNCTION THAT GIVES TOTAL GAMMA NEUTRON TO HADRONS CS
+C    UP TO 4 GEV (MICROBARNS)
+C
+      DOUBLE PRECISION V( 1)
+      INTEGER NPAR, NDIM, IMQFUN, I, J
+      DOUBLE PRECISION HQDJ, VV, VCONST
+      DOUBLE PRECISION SIGVMI( 1), SIGVT( 1)
+      DOUBLE PRECISION SIGV(  13, 1)
+      DOUBLE PRECISION SIGDEL(  13)
+      DOUBLE PRECISION SIGA(  13)
+      DATA NPAR, NDIM, IMQFUN /   13,    1,    2/
+      DATA VCONST / 0.1999999955297E-01/
+      DATA SIGVMI / 0.0000000000000E+00/
+      DATA SIGVT /  4.000000000000    /
+      DATA SIGV / 0.3249999880791E-01
+     +, 0.3749999776483E-01
+     +, 0.6250000000000E-01
+     +, 0.7750000059605E-01
+     +, 0.0000000000000E+00
+     +,  1.000000000000    
+     +, 0.9499999880791E-01
+     +, 0.1049999967217    
+     +, 0.1299999952316    
+     +, 0.1499999910593    
+     +, 0.1700000017881    
+     +, 0.1899999976158    
+     +, 0.2299999892712    
+     +/
+      DATA SIGDEL / 0.8999999612570E-02
+     +, 0.8999999612570E-02
+     +, 0.8999999612570E-02
+     +, 0.8999999612570E-02
+     +, 0.1799999949981E-05
+     +, 0.1799999949981E-05
+     +, 0.1799999922514E-01
+     +, 0.1799999922514E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +, 0.3599999845028E-01
+     +/
+      DATA SIGA / -2412.606982169    
+     +,  878.0612883864    
+     +,  53.83412527910    
+     +, -84.84403970019    
+     +,  1477.995598095    
+     +, -34.20687545814    
+     +,  52.45715450995    
+     +, -27.34378834294    
+     +,  34.63348564552    
+     +,  48.68942076758    
+     +, -85.23894944424    
+     +,  23.15460412420    
+     +,  6.441856209076    
+     +/
+      GNTOT = 0.
+      DO 20 J = 1, NPAR
+         HQDJ = 0.
+         DO 10 I = 1, NDIM
+            VV = (V (I) - SIGVMI (I)) / SIGVT (I)
+            HQDJ = HQDJ + (VV - SIGV (J, I)) ** 2
+   10    CONTINUE
+         HQDJ = HQDJ + SIGDEL (J) ** 2
+         HQDJ = SQRT (HQDJ)
+         GNTOT = GNTOT + SIGA (J) * HQDJ
+   20 CONTINUE
+      IF (IMQFUN .EQ. 2) GNTOT = VCONST * EXP (GNTOT)
+      END
+
+
+      REAL FUNCTION GDABS(EGAM)
+C
+C     THIS FUNCTION GIVES THE VALUE OF GAMMA-DEUTERON-->PN CS (MICROBARNS)
+C     AS FITTED BY P.ROSSI ET AL. PHYS.REV. C40(1989)2412
+C     IN THE REGION 0.01-0.440 GEV
+C
+C     ABOVE 0.5 GEV EXPONENTIAL EXPRESSION HAS TO BE USED
+C
+C     
+      IF(EGAM.LT.0.5) THEN
+          C1=27.5
+          C2=-21.69
+          C3=143.19
+          C4=-84.93
+          C5=9.69
+          C6=-16.34
+          C7=0.29
+          C8=68.46
+            TERM1=C1*EXP(C2*EGAM)
+            TERM2=C3*EXP(C4*EGAM)
+            TERM3=(C5+C6*EGAM)/(1.+C8*(EGAM-C7)**2)
+            GDABS=12.5663706143*(TERM1+TERM2+TERM3)
+      ELSE
+            GDABS=4.2604*EXP(-4.4103*EGAM) 
+      ENDIF  
+
+      RETURN
+      END      
+    
+
+
+      FUNCTION POTEN(I,IPATIN)
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM(10),RBIG(10),RHOP(10),
+     *RHON(10),AF(10),TFP(10),TFN(10)
+      DIMENSION IPATIN(9)
+C                 PARTICLE POTENTIAL IN NUCLEAR ZONE NUMBER I.
+C
+      VN=0.200
+      VE=0.000
+      IF (I-N-2) 10,11,11
+   10 IF (I-N-1) 12,13,12
+   11 POTEN = 0.
+      RETURN
+   12 IF(IPATIN(3)) 14,15,14
+   13 TEMP1 = IPATIN(1)
+      POTEN = TEMP1*AF(N+1)
+      RETURN
+C______________________________________________________________
+   14 TEMP1 = IPATIN(1)
+      POTEN = TEMP1*AF(I)
+      RETURN
+  15  IF(IPATIN(4))18,16,17
+  16  IF(IPATIN(8).EQ.8) GO TO 161
+      TEMP1 = IPATIN(1)
+      TEMP2 = IPATIN(2)-1
+      POTEN = TEMP1*AF(I)-VPI*TEMP2
+      RETURN
+ 161  POTEN=VE*(RHOP(I)+RHON(I))/(RHOP(1)+RHON(1))
+      RETURN
+   17 TEMP1 = IPATIN(1)
+      TEMP3 = IPATIN(4)
+      POTEN=TEMP1*AF(I)+TFP(I)*TEMP1+(1.-TEMP1)*TFN(I)+TEMP3*EPS
+      RETURN
+C---------------------------------------------------------------
+  18  TEMP1=IPATIN(1)
+      POTEN=VN*(RHOP(I)+RHON(I))/(RHOP(1)+RHON(1))+TEMP1*AF(I)
+      RETURN
+      END
+
+
+      SUBROUTINE HELP (A,R0N,RMAX,BN)
+C     HELP BLOCK . NEUTRON DENSITY = PROTON DENSITY = NUCLEON DENSITY .
+      EXTERNAL S2,FIS
+      DIMENSION A(10),HIN(10),FI(10)
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM(10),RBIG(10),RHOP(10),
+     *RHON(10),AF(10),TFP(10),TFN(10)/COHELP/W(8),FIKS(8)
+      COMMON /BLOK2/ATG,ZTG
+      RN = R0N*ANUCL**(1./3.)
+      DO 14 IA=1,N
+      RSM(IA) = RN+BN*(ALOG((1.-A(IA))/A(IA)))
+   14 CONTINUE
+      RSM(N+1) = RMAX
+      DO 15 IA=1,N
+      IF (IA-1) 16,16,17
+   16 FI(IA) = FINT(FIS,RSM(IA),0.,BN,RN)
+      HIN(IA) = FINT(S2,RSM(IA),0.,BN,RN)
+      GO TO 15
+   17 FI(IA) = FINT(FIS,RSM(IA),RSM(IA-1),BN,RN)
+      HIN(IA) = FINT(S2,RSM(IA),RSM(IA-1),BN,RN)
+      GO TO 15
+   15 CONTINUE
+      SUMHIN = 0.
+      DO 18 IA=1,N
+      SUMHIN = SUMHIN + HIN(IA)
+   18 CONTINUE
+      RHON0 = ANUCL/(4.*3.14159*SUMHIN)
+      FI0 = (4.*3.14159*ZNUCL*0.00144*RHON0)/ANUCL
+      DO 19 IA=1,N
+      IF (IA-1) 20,20,21
+   20 RHON(IA) = (3.*HIN(IA)*RHON0)/(RSM(IA)**3)
+      AF(IA) = (FI(IA)*FI0*3.)/(RSM(IA)**3)
+      GO TO 22
+   21 RHON(IA)=(3.*HIN(IA)*RHON0)/(RSM(IA)**3-RSM(IA-1)**3)
+      AF(IA) = (3.*FI0*FI(IA))/(RSM(IA)**3-RSM(IA-1)**3)
+      GO TO 22
+   22 CONTINUE
+      TFP(IA) = 0.1985*((RHON(IA)*ZNUCL/ANUCL)**(2./3.))
+      TFN(IA) = 0.1985*((RHON(IA)*(ANUCL-ZNUCL)/ANUCL)**(2./3.))
+      RBIG(IA) = RSM(IA)/RSM(N)
+   19 CONTINUE
+      RBIG(N+1) = RMAX/RSM(N)
+      AF(N+1) = ZNUCL*0.00144/RMAX
+      TFP(N+1)=0.
+      TFN(N+1)=0.
+      RHON(N+1)=0.
+      RHOP(N+1)=0.
+      K = N+2
+      DO 23 IA=K,10
+      RSM(IA)=0.
+      RBIG(IA)=0.
+      RHON(IA)=0.
+      RHOP(IA)=0.
+      AF(IA)=0.
+      TFP(IA)=0.
+      TFN(IA)=0.
+   23 CONTINUE
+      DO 30 IA=1,N
+      RHOP(IA) = RHON(IA)*ZNUCL/ANUCL
+      RHON(IA) = RHON(IA)*(ANUCL-ZNUCL)/ANUCL
+   30 CONTINUE
+      PRINT 100,RHON0
+  100 FORMAT(10X,'RHON0=',E13.6)
+      PRINT 101
+  101 FORMAT(/50X,'HELP ')
+      PRINT 102
+  102 FORMAT(15X,2H A,10X,4H RSM,10X,4HRBIG,10X,4HRHOP,10X,4HRHON,10X,
+     *4H AF ,10X,4H TFP,10X,4H TFN/)
+      DO 103 J=1,10
+  103 PRINT 104,A(J),RSM(J),RBIG(J),RHOP(J),RHON(J),AF(J),TFP(J),TFN(J)
+  104 FORMAT(12X,8(E10.4,4X))
+      RETURN
+      END
+
+
+      SUBROUTINE TC1
+      COMMON/COHELP/W(8),FIKS(8)
+      DATA W/0.1012285363,0.2223810345,0.3137066459,0.3626837834,
+     *0.3626837834,0.3137066459,0.2223810345,0.1012285363/,
+     *FIKS/0.9602898565,0.7966664774,0.5255324099,0.1834346425,
+     *-0.1834346425,-0.5255324099,-0.7966664774,-0.9602898565/
+      RETURN
+      END
+
+
+      SUBROUTINE RNDM1(L)
+C
+      COMMON/NACH/IX,IY,YEL
+C
+      IF(L)2,1,3
+    1 IX=1243564865
+      PRINT 11,IX
+   11 FORMAT(1X,'RNDM1   INITIAL IX=',I12)
+      RETURN
+C
+    2 PRINT 10,IX
+   10 FORMAT(1X,'RNDM1   LAST  IX=',I12)
+      RETURN
+C
+    3 IX=L
+      PRINT 11,IX
+      RETURN
+      END
+
+
+      FUNCTION RNDM00(L)
+c      COMMON/NACH/IX,IY,YEL
+      real vran(1)
+c      RNDM00=RNDM(IX)
+      call ranmar(vran,1)
+      RNDM00=vran(1)
+
+      RETURN
+      END
+
+
+
+
+	SUBROUTINE BOOK_FERMI
+ 
+C+
+C 
+C ABSTRACT:
+C  
+C     The present function fill in arrays for simulation of intranuclear
+C     Fermi motion separately for protons and neutrons.
+C     The distributions that have been used is akin to thouse in:
+C
+C     A.Shor et al., NP A514(1990)717 
+C
+C          and
+C
+C     Ye.S.Golubeva et al., ZP A345(1993)223
+C
+C  
+C FUNCTIONAL DESCRIPTION: 
+C 
+C     Returns the arrays with integral of distribution as a function of 
+C     momentum 
+C 
+C FORMAL PARAMETERS:
+C  
+C     none
+C  
+C DESIGN:
+C  
+C     12.06.95      by Igor Pshenichnov
+C  
+C 
+C-   
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM(10),RBIG(10),RHOP(10),
+     *RHON(10),AF(10),TFP(10),TFN(10)
+      COMMON /FER_ARRAY/F_PROT(100),F_NEUT(100),F_PP(100)
+            
+            ! FERMI MOMENTA FOR PROTONS AND NEUTRONS
+      P_F_PROT=((9.*3.14159*ZNUCL/4./ANUCL)**0.33333)/1.3/5.067
+      P_F_NEUT=((9.*3.14159*(ANUCL-ZNUCL)/4./ANUCL)**0.33333)/1.3/5.067
+      
+      SIGMA_1P=SQRT(1./5.)*P_F_PROT
+      SIGMA_1N=SQRT(1./5.)*P_F_NEUT
+
+      SIGMA_2P=0.230
+      SIGMA_2N=0.230
+
+      ALPHA=0.02620741*ANUCL**0.33333
+
+      F_PROT(1)=0.
+      F_NEUT(1)=0.
+      F_PP(1)=0.
+
+      DO I=2,100
+         F_PP(I)=(I-1)*0.010
+         F_PROT(I)=(1./(2*3.14159)**1.5/(1.+ALPHA))*(F_PP(I)**2)*
+     # (EXP(-F_PP(I)**2/2./SIGMA_1P**2)/SIGMA_1P**3+
+     #  ALPHA*EXP(-F_PP(I)**2/2./SIGMA_2P**2)/SIGMA_2P**3)+
+     #  F_PROT(I-1)
+         F_NEUT(I)=(1./(2*3.14159)**1.5/(1.+ALPHA))*(F_PP(I)**2)*
+     # (EXP(-F_PP(I)**2/2./SIGMA_1N**2)/SIGMA_1N**3+
+     #  ALPHA*EXP(-F_PP(I)**2/2./SIGMA_2N**2)/SIGMA_2N**3)+
+     #  F_NEUT(I-1)
+      ENDDO
+  
+      DO I=2,100
+         F_PROT(I)=F_PROT(I)/F_PROT(100)
+         F_NEUT(I)=F_NEUT(I)/F_NEUT(100)
+      ENDDO
+
+	RETURN
+	END
+

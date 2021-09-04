@@ -1,0 +1,2 @@
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/bosiodump.o /user/a/alaoui/software/clas_software_ver1/slib/Linux64RHEL7/bosio_bosiodump.o ./depends/Linux64RHEL7/bosio_bosiodump.d: bosiodump.c
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/bosiodump_debug.o /user/a/alaoui/software/clas_software_ver1/slib/Linux64RHEL7/bosio_bosiodump_debug.o ./depends/Linux64RHEL7/bosio_bosiodump.d: bosiodump.c

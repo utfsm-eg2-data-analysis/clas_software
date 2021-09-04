@@ -1,0 +1,537 @@
+
+
+
+BOS++BOSBK+  ARRAY NR  1     /BCS/IW      TABLE OF ALL BANKS
+
+-----------  NAMED BANKS
+
+     NAME.......NR....ND      NAME.......NR....ND      NAME.......NR....ND 
+     +KYE        0    40      HEAD        0     8      MCEV        0     2  
+     MCVX        0     5      MCTK        0    11      
+
+    PLUS         6 DELETED WORDS
+
+-----------  WORK BANKS 
+
+     NAME.......NT....ND      NAME.......NT....ND      NAME.......NT....ND 
+     WORK       50    44      +LST       26     4      +FMT       13     7  
+     +FMT       13     7      +FMT       13     7      +FMT       12     4  
+     +FMT       12     6      +FMT        9     3      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT       13     7      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT        9     3      +FMT       10     4  
+     +FMT       15     9      +IDF      106   100      +PTR      203   197  
+     +NAM      106    22      +LNK      106   100      
+
+    PLUS         0 DELETED WORDS
+
+
+ Dump of bank DC:
+
+
+ Dump of bank DC0:
+
+
+ Dump of bank DCH:
+
+
+ Dump of bank CC:
+
+
+ Dump of bank CCH:
+
+
+ Dump of bank EC:
+
+
+ Dump of bank ECH:
+
+
+ Dump of bank SC:
+
+
+ Dump of bank SCH:
+
+
+ Dump of bank ST:
+
+
+ Dump of bank STH:
+
+
+ Dump of bank MCEV:
+
+ M/NPRNT --- NAMED BANK MCEV 0           WITH     2 DATA WORDS AT INDEX   283
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  2        12754       60490                                                                                                
+
+
+ Dump of bank MCVX:
+
+ M/NPRNT --- NAMED BANK MCVX 0           WITH     5 DATA WORDS AT INDEX   291
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5           0.          0.          0.          0.           0                                                            
+
+
+ Dump of bank MCTK:
+
+ M/NPRNT --- NAMED BANK MCTK 0           WITH    11 DATA WORDS AT INDEX   302
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5    -0.730317   -0.264268    0.629921          1.     0.10566                                                            
+     6- 10          -1.          13           0           1           0                                                            
+    11- 11            0                                                                                                            
+
+
+ Dump of bank MCIN:
+
+
+ Dump of bank MCPA:
+
+
+ Dump of bank HEAD
+
+ M/NPRNT --- NAMED BANK HEAD 0           WITH     8 DATA WORDS AT INDEX   269
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5            2           0           1           0          -1                                                            
+     6-  8            0           7           1                                                                                    
+
+
+ enter return to continue, q to quit: 
+
+
+BOS++BOSBK+  ARRAY NR  1     /BCS/IW      TABLE OF ALL BANKS
+
+-----------  NAMED BANKS
+
+     NAME.......NR....ND      NAME.......NR....ND      NAME.......NR....ND 
+     +KYE        0    40      HEAD        0     8      MCEV        0     2  
+     MCVX        0     5      MCTK        0    11      
+
+    PLUS         6 DELETED WORDS
+
+-----------  WORK BANKS 
+
+     NAME.......NT....ND      NAME.......NT....ND      NAME.......NT....ND 
+     WORK       50    44      +LST       26     4      +FMT       13     7  
+     +FMT       13     7      +FMT       13     7      +FMT       12     4  
+     +FMT       12     6      +FMT        9     3      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT       13     7      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT        9     3      +FMT       10     4  
+     +FMT       15     9      +IDF      106   100      +PTR      203   197  
+     +NAM      106    22      +LNK      106   100      
+
+    PLUS         0 DELETED WORDS
+
+
+ Dump of bank DC:
+
+
+ Dump of bank DC0:
+
+
+ Dump of bank DCH:
+
+
+ Dump of bank CC:
+
+
+ Dump of bank CCH:
+
+
+ Dump of bank EC:
+
+
+ Dump of bank ECH:
+
+
+ Dump of bank SC:
+
+
+ Dump of bank SCH:
+
+
+ Dump of bank ST:
+
+
+ Dump of bank STH:
+
+
+ Dump of bank MCEV:
+
+ M/NPRNT --- NAMED BANK MCEV 0           WITH     2 DATA WORDS AT INDEX   283
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  2        57333       85873                                                                                                
+
+
+ Dump of bank MCVX:
+
+ M/NPRNT --- NAMED BANK MCVX 0           WITH     5 DATA WORDS AT INDEX   291
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5           0.          0.          0.          0.           0                                                            
+
+
+ Dump of bank MCTK:
+
+ M/NPRNT --- NAMED BANK MCTK 0           WITH    11 DATA WORDS AT INDEX   302
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5    -0.718319    0.298089    0.628618          1.     0.10566                                                            
+     6- 10          -1.          13           0           1           0                                                            
+    11- 11            0                                                                                                            
+
+
+ Dump of bank MCIN:
+
+
+ Dump of bank MCPA:
+
+
+ Dump of bank HEAD
+
+ M/NPRNT --- NAMED BANK HEAD 0           WITH     8 DATA WORDS AT INDEX   269
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5            2           0           2           0          -1                                                            
+     6-  8            0           7           1                                                                                    
+
+
+ enter return to continue, q to quit: 
+
+
+BOS++BOSBK+  ARRAY NR  1     /BCS/IW      TABLE OF ALL BANKS
+
+-----------  NAMED BANKS
+
+     NAME.......NR....ND      NAME.......NR....ND      NAME.......NR....ND 
+     +KYE        0    40      HEAD        0     8      MCEV        0     2  
+     MCVX        0     5      MCTK        0    11      
+
+    PLUS         6 DELETED WORDS
+
+-----------  WORK BANKS 
+
+     NAME.......NT....ND      NAME.......NT....ND      NAME.......NT....ND 
+     WORK       50    44      +LST       26     4      +FMT       13     7  
+     +FMT       13     7      +FMT       13     7      +FMT       12     4  
+     +FMT       12     6      +FMT        9     3      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT       13     7      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT        9     3      +FMT       10     4  
+     +FMT       15     9      +IDF      106   100      +PTR      203   197  
+     +NAM      106    22      +LNK      106   100      
+
+    PLUS         0 DELETED WORDS
+
+
+ Dump of bank DC:
+
+
+ Dump of bank DC0:
+
+
+ Dump of bank DCH:
+
+
+ Dump of bank CC:
+
+
+ Dump of bank CCH:
+
+
+ Dump of bank EC:
+
+
+ Dump of bank ECH:
+
+
+ Dump of bank SC:
+
+
+ Dump of bank SCH:
+
+
+ Dump of bank ST:
+
+
+ Dump of bank STH:
+
+
+ Dump of bank MCEV:
+
+ M/NPRNT --- NAMED BANK MCEV 0           WITH     2 DATA WORDS AT INDEX   283
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  2        53047       44526                                                                                                
+
+
+ Dump of bank MCVX:
+
+ M/NPRNT --- NAMED BANK MCVX 0           WITH     5 DATA WORDS AT INDEX   291
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5           0.          0.          0.          0.           0                                                            
+
+
+ Dump of bank MCTK:
+
+ M/NPRNT --- NAMED BANK MCTK 0           WITH    11 DATA WORDS AT INDEX   302
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5     -0.74087   -0.186069    0.645361          1.     0.10566                                                            
+     6- 10          -1.          13           0           1           0                                                            
+    11- 11            0                                                                                                            
+
+
+ Dump of bank MCIN:
+
+
+ Dump of bank MCPA:
+
+
+ Dump of bank HEAD
+
+ M/NPRNT --- NAMED BANK HEAD 0           WITH     8 DATA WORDS AT INDEX   269
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5            2           0           3           0          -1                                                            
+     6-  8            0           7           1                                                                                    
+
+
+ enter return to continue, q to quit: 
+
+
+BOS++BOSBK+  ARRAY NR  1     /BCS/IW      TABLE OF ALL BANKS
+
+-----------  NAMED BANKS
+
+     NAME.......NR....ND      NAME.......NR....ND      NAME.......NR....ND 
+     +KYE        0    40      HEAD        0     8      MCEV        0     2  
+     MCVX        0     5      MCTK        0    11      
+
+    PLUS         6 DELETED WORDS
+
+-----------  WORK BANKS 
+
+     NAME.......NT....ND      NAME.......NT....ND      NAME.......NT....ND 
+     WORK       50    44      +LST       26     4      +FMT       13     7  
+     +FMT       13     7      +FMT       13     7      +FMT       12     4  
+     +FMT       12     6      +FMT        9     3      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT       13     7      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT        9     3      +FMT       10     4  
+     +FMT       15     9      +IDF      106   100      +PTR      203   197  
+     +NAM      106    22      +LNK      106   100      
+
+    PLUS         0 DELETED WORDS
+
+
+ Dump of bank DC:
+
+
+ Dump of bank DC0:
+
+
+ Dump of bank DCH:
+
+
+ Dump of bank CC:
+
+
+ Dump of bank CCH:
+
+
+ Dump of bank EC:
+
+
+ Dump of bank ECH:
+
+
+ Dump of bank SC:
+
+
+ Dump of bank SCH:
+
+
+ Dump of bank ST:
+
+
+ Dump of bank STH:
+
+
+ Dump of bank MCEV:
+
+ M/NPRNT --- NAMED BANK MCEV 0           WITH     2 DATA WORDS AT INDEX   283
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  2        31299       14725                                                                                                
+
+
+ Dump of bank MCVX:
+
+ M/NPRNT --- NAMED BANK MCVX 0           WITH     5 DATA WORDS AT INDEX   291
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5           0.          0.          0.          0.           0                                                            
+
+
+ Dump of bank MCTK:
+
+ M/NPRNT --- NAMED BANK MCTK 0           WITH    11 DATA WORDS AT INDEX   302
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5    -0.927136   -0.188115    0.324085          1.     0.10566                                                            
+     6- 10          -1.          13           0           1           0                                                            
+    11- 11            0                                                                                                            
+
+
+ Dump of bank MCIN:
+
+
+ Dump of bank MCPA:
+
+
+ Dump of bank HEAD
+
+ M/NPRNT --- NAMED BANK HEAD 0           WITH     8 DATA WORDS AT INDEX   269
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5            2           0           4           0          -1                                                            
+     6-  8            0           7           1                                                                                    
+
+
+ enter return to continue, q to quit: 
+
+
+BOS++BOSBK+  ARRAY NR  1     /BCS/IW      TABLE OF ALL BANKS
+
+-----------  NAMED BANKS
+
+     NAME.......NR....ND      NAME.......NR....ND      NAME.......NR....ND 
+     +KYE        0    40      HEAD        0     8      MCEV        0     2  
+     MCVX        0     5      MCTK        0    11      
+
+    PLUS         6 DELETED WORDS
+
+-----------  WORK BANKS 
+
+     NAME.......NT....ND      NAME.......NT....ND      NAME.......NT....ND 
+     WORK       50    44      +LST       26     4      +FMT       13     7  
+     +FMT       13     7      +FMT       13     7      +FMT       12     4  
+     +FMT       12     6      +FMT        9     3      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT       13     7      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT        9     3      +FMT       10     4  
+     +FMT       15     9      +IDF      106   100      +PTR      203   197  
+     +NAM      106    22      +LNK      106   100      
+
+    PLUS         0 DELETED WORDS
+
+
+ Dump of bank DC:
+
+
+ Dump of bank DC0:
+
+
+ Dump of bank DCH:
+
+
+ Dump of bank CC:
+
+
+ Dump of bank CCH:
+
+
+ Dump of bank EC:
+
+
+ Dump of bank ECH:
+
+
+ Dump of bank SC:
+
+
+ Dump of bank SCH:
+
+
+ Dump of bank ST:
+
+
+ Dump of bank STH:
+
+
+ Dump of bank MCEV:
+
+ M/NPRNT --- NAMED BANK MCEV 0           WITH     2 DATA WORDS AT INDEX   283
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  2        55543       11238                                                                                                
+
+
+ Dump of bank MCVX:
+
+ M/NPRNT --- NAMED BANK MCVX 0           WITH     5 DATA WORDS AT INDEX   291
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5           0.          0.          0.          0.           0                                                            
+
+
+ Dump of bank MCTK:
+
+ M/NPRNT --- NAMED BANK MCTK 0           WITH    11 DATA WORDS AT INDEX   302
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5    -0.953532  -0.0900818    0.287509          1.     0.10566                                                            
+     6- 10          -1.          13           0           1           0                                                            
+    11- 11            0                                                                                                            
+
+
+ Dump of bank MCIN:
+
+
+ Dump of bank MCPA:
+
+
+ Dump of bank HEAD
+
+ M/NPRNT --- NAMED BANK HEAD 0           WITH     8 DATA WORDS AT INDEX   269
+                                                   (INDEX TO NEXT BANK =     0)
+
+     1-  5            2           0           5           0          -1                                                            
+     6-  8            0           7           1                                                                                    
+
+
+ enter return to continue, q to quit: 
+
+
+BOS++BOSBK+  ARRAY NR  1     /BCS/IW      TABLE OF ALL BANKS
+
+-----------  NAMED BANKS
+
+     NAME.......NR....ND      NAME.......NR....ND      NAME.......NR....ND 
+     +KYE        0    40      HEAD        0     8      MCEV        0     2  
+     MCVX        0     5      MCTK        0    11      
+
+    PLUS         6 DELETED WORDS
+
+-----------  WORK BANKS 
+
+     NAME.......NT....ND      NAME.......NT....ND      NAME.......NT....ND 
+     WORK       50    44      +LST       26     4      +FMT       13     7  
+     +FMT       13     7      +FMT       13     7      +FMT       12     4  
+     +FMT       12     6      +FMT        9     3      +FMT        9     3  
+     +FMT       13     7      +FMT        9     3      +FMT       13     7  
+     +FMT        9     3      +FMT       13     7      +FMT        9     3  
+     +FMT       13     7      +FMT        

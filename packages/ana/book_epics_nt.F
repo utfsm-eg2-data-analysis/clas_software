@@ -1,0 +1,88 @@
+      SUBROUTINE BOOK_EPICS_NT(NTID)
+c
+c_begin_doc
+c  RCS ID string
+c  $Id: book_epics_nt.F,v 1.3 2005/08/09 19:18:10 stepanya Exp $
+c
+c  Documentation for subroutine BOOK_EPICS_NT.F
+c
+c  Purpose:
+c  --------
+c
+c  Input Parameters: Non (Name - Type - Meaning)
+c  ----------------
+c
+c  Output Parameters:Non  (Name - Type - Meaning)
+c  -----------------
+c
+c  Other routines:
+c  ---------------
+c
+c  Notes:
+c  ------
+c
+c  Author:  S. Stepanyan       Created:  2004
+c  -------
+c
+c  Major revisions:
+c  ----------------
+c     
+c
+c_end_doc
+c
+      IMPLICIT NONE
+      SAVE
+c
+c_begin_inc
+c  include files :
+c  ---------------------
+#include "epics_nt.inc"
+c_end_inc
+c
+c_begin_var
+c  input/output variables:
+c  -----------------------
+c
+c  Local pre-defined variables:
+c  ---------------------------
+c  RCS information: 
+      CHARACTER*132  CFILE, CREVIS, CSTATE, CDATE, CAUTHO, CRCSID
+      PARAMETER (CFILE = '$RCSfile: book_epics_nt.F,v $')
+      PARAMETER (CREVIS = '$Revision: 1.3 $')
+      PARAMETER (CSTATE = '$State: Exp $')
+      PARAMETER (CDATE = '$Date: 2005/08/09 19:18:10 $')
+      PARAMETER (CAUTHO = '$Author: stepanya $')
+      DATA CRCSID/ 
+     +'$Id: book_epics_nt.F,v 1.3 2005/08/09 19:18:10 stepanya Exp $'/
+c  Module information:
+      CHARACTER*(*)  CRNAME, CRAUTH
+      CHARACTER*100  CRMESS
+      PARAMETER (CRNAME='BOOK_EPICS_NT.F')
+      PARAMETER (CRAUTH='Stepan Stepanyan')
+c
+c  Local User defined variables:
+c  -----------------------------
+      INTEGER NWRITE, NTID
+c_end_var
+c
+c  executable code for routine BOOK_SCRW_NT.F:
+c----6----------------------------------------------------------------72
+c
+      IF (NWRITE .LT. 1) THEN
+        NWRITE = NWRITE + 1
+        CRMESS='Booking a N-tuple for IC hits'
+        CALL RECMES(CRNAME,'I',CRMESS)
+      ENDIF
+c
+      print *,"Booking EPICS",ntid
+      CALL hbname(NTID,'epics',run,
+     +'run:I,ebad:R,event:I,evntime:I,intt:R,ebsya:R,ebsyb:R,'//
+     +'etiefa:R,x2c21a:R,y2c21a:R,c2c21a:R,x2c24a:R,y2c24a:R,'//
+     +'c2c24a:R,x2h01a:R,y2h01a:R,c2h01a:R,target_type:R,'//
+     +'target_position:R,polarization:R,he_level:R,fcup:R,half_wave:R')
+c    +'pscurrent:R,psprobe:R,taggercurrent:R,taggerprobe:R'
+ 
+      RETURN
+      END
+c
+c-----------------------------------------------------------------------

@@ -1,0 +1,22 @@
+/Makefile/1.5/Fri May  9 17:26:33 1997//
+/Makefile_alt/1.2/Tue Oct 31 20:36:33 2000//
+/README.RF/1.1/Fri Apr 17 21:22:26 1998//
+/rf_brun.F/1.1/Fri Apr 17 21:03:15 1998//
+/rf_evnt.F/1.4/Tue Mar  9 17:56:05 1999//
+/rf_evnt_from_raw.F/1.4/Tue Mar  9 17:56:05 1999//
+/rfcal.CMN/1.1/Fri Apr 17 21:03:18 1998//
+/rfcal_read_file.F/1.1/Fri Apr 17 21:03:16 1998//
+/rfcal_read_map.F/1.3/Tue Mar  9 17:56:06 1999//
+/rftcl.CMN/1.1/Fri Apr 17 21:03:09 1998//
+/rftcl_init.F/1.1/Fri Apr 17 21:03:11 1998//
+/rftcl_set_def.F/1.1/Fri Apr 17 21:03:14 1998//
+/sc.html/1.3/Fri Aug 28 16:09:42 1998//
+/sc_channel_status.c/1.2/Thu May 10 19:50:24 2001//
+/sc_dedx.c/1.8/Sun Mar 16 04:33:22 2008//
+/sc_geom.c/1.13/Sun Mar 16 04:33:22 2008//
+/sc_makeSC1.c/1.28/Sun Mar 16 04:33:22 2008//
+/sc_makeSCR.c/1.42/Sun Mar 16 04:33:22 2008//
+/sc_makeSCRC.c/1.6/Sun Mar 16 04:33:22 2008//
+/sc_utilities.c/1.2/Sun Mar 16 04:33:22 2008//
+/sc_init.c/1.18/Mon Aug  4 19:16:15 2008//
+D

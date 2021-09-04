@@ -1,0 +1,1 @@
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/libscat.a(spack.o) ./depends/Linux64RHEL7/spack.d: 

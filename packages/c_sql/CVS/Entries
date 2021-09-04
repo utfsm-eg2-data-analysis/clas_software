@@ -1,0 +1,19 @@
+/Makefile/1.14/Tue Jul  9 16:09:43 2002//
+/Makefile.alt/1.1/Thu Mar 21 03:58:05 2002//
+/add_group.c/1.1/Tue Mar 12 21:13:44 2002//
+/connect_server.c/1.8/Tue Oct 14 15:44:05 2003//
+/create_table.c/1.12/Sun Mar 16 04:33:14 2008//
+/delete_table.c/1.1/Tue Mar 12 21:13:45 2002//
+/execute_query.c/1.1/Tue Mar 12 21:13:45 2002//
+/fill_table.c/1.6/Sun Mar 16 04:33:14 2008//
+/fort_wrapper.c/1.4/Wed Apr 14 20:55:28 2004//
+/init_clas.c/1.8/Thu Apr 29 12:50:28 2004//
+/init_csql.c/1.16/Tue Oct 14 16:48:39 2003//
+/print_group.c/1.8/Tue Mar 12 23:10:43 2002//
+/read_ddlfile.c/1.13/Wed Mar 13 03:26:48 2002//
+/set_column.c/1.7/Tue Mar 12 21:13:45 2002//
+/set_group.c/1.6/Tue Mar 12 21:22:48 2002//
+/string_functions.c/1.4/Tue Mar 12 21:13:45 2002//
+/sys_utils.c/1.14/Tue Mar 12 21:13:45 2002//
+/add_column.c/1.8/Wed Apr 14 20:55:23 2004//
+D

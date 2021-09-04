@@ -1,0 +1,2 @@
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/bosiosubjob.o /user/a/alaoui/software/clas_software_ver1/slib/Linux64RHEL7/bosio_bosiosubjob.o ./depends/Linux64RHEL7/bosio_bosiosubjob.d: bosiosubjob.c
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/bosiosubjob_debug.o /user/a/alaoui/software/clas_software_ver1/slib/Linux64RHEL7/bosio_bosiosubjob_debug.o ./depends/Linux64RHEL7/bosio_bosiosubjob.d: bosiosubjob.c

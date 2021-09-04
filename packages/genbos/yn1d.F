@@ -1,0 +1,1259 @@
+      SUBROUTINE CASCADD(ENEXT,ATWGHT,CHARGE,PNUCL,AMNUCL,KSTART,OBR,
+     *NEL)
+C
+C     CASCADE PROGRAM FOR ALL NONSTRANGE PROJECTILES,
+C     INCLUDING GAMMA QUANTA AND ANTINUCLEONS
+C
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,
+     *RSM(10),RBIG(10),RHOP(10),RHON(10),AF(10),TFP(10),TFN(10)
+     */BEGIN/CM0,T0,T1,T2,ME0,MQ0,MS0,L0
+     */MEMORY/PMEMO(9,100),IMEMO(9,100)
+     */BLOKC/SPTU(10,250)
+     */PAU/PMEM(9,15),IMEM(9,15)
+     */PAUP/ETOT,PX,PY,PZ
+C
+     */ANTIN/ NITN
+     */NCASCA/NC_COUNT,NCPRI
+     */IRES/IRES,IAN
+     */EXITON/ NDUR,NKVAZ,NKZAR
+     */IELA/ IELA
+     */IPIB/ IPIB
+     */PAR/ PAR1(9),IPA1(5)
+     */IH/IH,NPROS
+     */IPAR/IPAR
+      DIMENSION PARTIN(9),IPATIN(9),V(3),AM0(3),PNUCL(3),AMNUCL(3),
+     *PARTNE(9),IPATNE(5)
+C
+      MV=0
+      NEL=0
+      IELA=0
+      NDUR =0
+      NKVAZ=0
+      NKZAR=0
+      KSTART = 1
+      NITN=0
+C
+      IST=0
+      IS1=0
+      NVZ=0 
+C
+      PRINT 60,NC_COUNT
+  60  FORMAT(/1X,80('*')/5X,'CASCADE COUNT = ',I10,
+     *'    BEGINING OF CASCADE:  CALL PINPN')
+      CALL PINPN (PARTIN,IPATIN,MV,NABS,AM0,P0,T3)
+      PRINT *,'    END PINPN T3=',T3
+      TEMP1=MQ0
+      TEMP2=L0
+      TEMP3=ME0
+      ATWGHT=ANUCL+TEMP1
+      CHARGE=ZNUCL+TEMP3
+      ENEXT=T3
+C
+      IF (MV.GT.0) PRINT 101
+ 101  FORMAT(//25X,'PARTICLES IN THE MEMORY:'/
+     *8X,'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE  UNSTAB         ',
+     *         ' NUMBER    IR   ')
+      DO 146 MT=1,MV
+      PRINT  80,MT,PMEMO(1,MT),PMEMO(2,MT),PMEMO(3,MT),
+     *PMEMO(4,MT),PMEMO(5,MT),PMEMO(6,MT),PMEMO(7,MT),
+     *PMEMO(8,MT),PMEMO(9,MT),IMEMO(1,MT),IMEMO(2,MT),
+     *IMEMO(3,MT),IMEMO(4,MT),IMEMO(5,MT),IMEMO(6,MT),
+     *IMEMO(7,MT),IMEMO(8,MT),IMEMO(9,MT)
+  146 CONTINUE
+      PRINT 102
+102   FORMAT(//5X,'PARTICLE ENTRY TO THE NUCLEUS (PARTIN,IPATIN):')
+      PRINT 109,1,PARTIN(1),PARTIN(2),PARTIN(3),
+     *PARTIN(4),PARTIN(5),PARTIN(6),PARTIN(7),
+     *PARTIN(8),PARTIN(9),IPATIN(1),IPATIN(2),
+     *IPATIN(3),IPATIN(4),IPATIN(5),IPATIN(6),
+     *IPATIN(7),IPATIN(8),IPATIN(9)
+  80  FORMAT(1X,I2,1X,9(F7.3,1X)/2X,9(1X,I6,1X))
+ 109  FORMAT(8X,'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/1X,I2,1X,9(F7.3,1X)/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE  UNSTAB         ',
+     *         ' NUMBER    IR   '/2X,9(1X,I6,1X))
+C
+      PNUCL(1) = 0.
+      PNUCL(2) = 0.
+      PNUCL(3) = P0
+      AMNUCL(1)=AM0(1)
+      AMNUCL(2)=AM0(2)
+      AMNUCL(3)=AM0(3)
+C
+   10 TEMP1=IPATIN(4)
+      TEMP2=IPATIN(1)
+      ITEMP=IPATIN(5)
+      NABS=0
+      NOUT=0
+      IPAR=0
+      CUTOF1=TEMP1*(POTEN(ITEMP,IPATIN)+
+     *EPS+TEMP2*OBR)
+      IF(IPATIN(4).EQ.-1)CUTOF1=0.
+      WRITE(*,*)' CUTOF1=',CUTOF1
+      IF (PARTIN(8)-CUTOF1) 20,20,11
+ 11   IF(MV.GT.0)PRINT 101
+      DO 147 MT=1,MV
+      PRINT 80,MT,PMEMO(1,MT),PMEMO(2,MT),PMEMO(3,MT),
+     *PMEMO(4,MT),PMEMO(5,MT),PMEMO(6,MT),PMEMO(7,MT),
+     *PMEMO(8,MT),PMEMO(9,MT),IMEMO(1,MT),IMEMO(2,MT),
+     *IMEMO(3,MT),IMEMO(4,MT),IMEMO(5,MT),IMEMO(6,MT),
+     *IMEMO(7,MT),IMEMO(8,MT),IMEMO(9,MT)
+  147 CONTINUE
+      WRITE(*,*)'  CALL POINTE:'
+      CALL POINTE(NR,PARTIN,IPATIN,PARTNE,IPATNE,NABS,NOUT,
+     *V,U,TIN1,SIGP,SIGN,SIGABS,T0)
+      RIN=SQRT(PARTIN(1)**2+PARTIN(2)**2+PARTIN(3)**2)
+      M=IPATIN(5)
+      WRITE(*,*)'  END POINTE:  RIN=',RIN,' ZONE=',M,'  NOUT=',NOUT
+C
+      IF(NOUT) 13,13,18
+  13  PRINT 104
+ 104  FORMAT(/15X,'PARTICLE AND PARTNER BEFORE INTERACTION:')
+      PRINT 105,PARTIN,IPATIN,PARTNE,IPATNE
+ 105  FORMAT(1X,'PAR-LE:',
+     *'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/4X,9(F7.3,1X)/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE  UNSTAB         ',
+     *         ' NUMBER    IR   '/2X,9(1X,I6,1X)/1X,
+     *'PARTNE:',
+     *'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/4X,9(F7.3,1X)/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE                 ',
+     *         '                '/2X,5(1X,I6,1X))
+C
+      WRITE(*,*)'  CASCAD NR',NR
+      CALL TYPINT (NR,PARTIN,IPATIN,PARTNE,IPATNE,
+     + V,U,TIN1,SIGP,SIGN,SIGABS,MV,NP)
+      IF (NR.EQ.3.AND.IPATIN(4).EQ.1)GO TO 6
+C
+      PX=0.
+      PY=0.
+      PZ=0.
+      P=SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      PX=PX+P*PARTIN(4)*PARTIN(7)
+      PY=PY+P*PARTIN(4)*PARTIN(6)
+      PZ=PZ+P*PARTIN(5)
+      IF(NR.EQ.2) GO TO 301
+      P=SQRT(PARTNE(8)*(PARTNE(8)+2.*PARTNE(9)))
+      PX=PX+P*PARTNE(4)*PARTNE(7)
+      PY=PY+P*PARTNE(4)*PARTNE(6)
+      PZ=PZ+P*PARTNE(5)
+      IF(IPAR.EQ.1) GO TO 300
+      GO TO 301
+ 300  P=SQRT(PAR1(8)*(PAR1(8)+2.*PAR1(9)))
+      PX=PX+P*PAR1(4)*PAR1(7)
+      PY=PY+P*PAR1(4)*PAR1(6)
+      PZ=PZ+P*PAR1(5)
+      PRINT 205,PAR1,IPA1
+ 301  IF(NITN.GT.0)RAN=SQRT(PARTNE(1)**2+PARTNE(2)**2+PARTNE(3)**2)
+      ETOT=PARTIN(8)+PARTIN(9)+PARTNE(8)+PARTNE(9)
+      WRITE(*,*)'    PX=',PX,'    PY=',PY,'    PZ=',PZ
+      NITN=0
+  205  FORMAT(25X,'SECOND PARTNER:'/8X,
+     *'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/4X,9(F7.3,1X)/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE                 ',
+     *         '                '/2X,5(1X,I6,1X))
+C
+      WRITE(*,*)'  CALL PAULI'
+      CALL PAULI (PARTIN,IPATIN,V,TFP,TFN,MV,NP,IP)
+      IF(IP.EQ.1)GO TO 43
+      IF(NR.EQ.2) PRINT 116
+ 116  FORMAT(//40X,'DECAY')
+C
+      PRINT 107
+ 107  FORMAT(//25X,'RESULT OF INTERACTION:'/
+     *8X,'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE  UNSTAB         ',
+     *         ' NUMBER    IR   ')
+      DO 245 MTEMP=1,NP
+      PRINT 80,MTEMP,PMEM(1,MTEMP),PMEM(2,MTEMP),PMEM(3,MTEMP),
+     *PMEM(4,MTEMP),PMEM(5,MTEMP),PMEM(6,MTEMP),PMEM(7,MTEMP),
+     *PMEM(8,MTEMP),PMEM(9,MTEMP),IMEM(1,MTEMP),IMEM(2,MTEMP),
+     *IMEM(3,MTEMP),IMEM(4,MTEMP),IMEM(5,MTEMP),IMEM(6,MTEMP),
+     *IMEM(7,MTEMP),IMEM(8,MTEMP),IMEM(9,MTEMP)
+ 245  CONTINUE
+      WRITE(*,*)'    PX=',PX,'    PY=',PY,'    PZ=',PZ
+C
+      IF(NR.EQ.2)GO TO 10
+      GO TO 1
+ 43   PRINT 106
+ 106  FORMAT(//15X,'INTERACTION IS NOT PERMITED BY PAULI !')
+      GO TO 10
+C
+    1 CONTINUE
+      IKE=IPATNE(5)
+      PRINT *,'  CASC1 IKE,TFP(IKE),PARTNE(8)',IKE,TFP(ike),PARTNE(8)
+      ENEXT=ENEXT+TFP(IKE)-PARTNE(8)
+      NDUR=NDUR+1
+      IF(IPAR.EQ.0) GO TO 10
+      IKE=IPA1(5)
+      PRINT *,'  CASC IKE,PAR1(8)',IKE,PAR1(8)
+      ENEXT=ENEXT+TFP(IKE)-PAR1(8)
+      NDUR=NDUR+1
+      GO TO 10
+C
+   18 TEMP1 = IPATIN(4)
+      ITEMP = IPATIN(5)
+      TEMP3 = IPATIN(2)
+      IF (IPATIN(1)) 22,22,23
+   22 TEMP2 = 0.
+      GO TO 24
+   23 TEMP2 = IPATIN(1)
+      GO TO 24
+   24 CUTOF2 = POTEN(ITEMP,IPATIN)+
+     *TEMP1*(EPS+OBR*TEMP2)+(1.-TEMP1)*TEMP2*OBR
+      IF(IPATIN(4).EQ.-1)CUTOF2=POTEN(ITEMP,IPATIN)
+      WRITE(*,*)' CUTOF2=',CUTOF2
+      IF (PARTIN(8)-CUTOF2) 20,20,45
+  45  IF(IPATIN(4))40,41,41
+  40  CONTINUE
+      IELA=1
+      GO TO 41
+  41  ATWGHT=ATWGHT-TEMP1
+      TEMP2 = IPATIN(1)
+      CHARGE = CHARGE-TEMP2
+      TEMP3 = SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      TEMP4 = PARTIN(4)*PARTIN(7)
+      TEMP5 = PARTIN(4)*PARTIN(6)
+      PNUCL(1) = PNUCL(1)-TEMP3*TEMP4
+      PNUCL(2) = PNUCL(2)-TEMP3*TEMP5
+      PNUCL(3) = PNUCL(3)-TEMP3*PARTIN(5)
+      AMNUCL(1)=AMNUCL(1)-TEMP3*(PARTIN(3)*TEMP5-PARTIN(2)*PARTIN(5))
+      AMNUCL(2)=AMNUCL(2)-TEMP3*(PARTIN(1)*PARTIN(5)-PARTIN(3)*TEMP4)
+      AMNUCL(3)=AMNUCL(3)-TEMP3*(PARTIN(2)*TEMP4-PARTIN(1)*TEMP5)
+      IF (IRES.NE.0) GO TO 16
+      IF(ENEXT-0.0001) 14,14,16
+   14 IF (ATWGHT-ANUCL) 16,15,16
+   15 IF (CHARGE-ZNUCL) 16,17,16
+   17 NEL=1
+      IELA=0
+      RETURN
+   16 IF(KSTART-250)26,26,25
+   25 PRINT 27
+   27 FORMAT (20X,'MASSIV SPTU EXCEEDED AFTER CASCAD')
+      RETURN
+
+ 26   PRINT  90,PARTIN(1),PARTIN(2),PARTIN(3),
+     *PARTIN(4),PARTIN(5),PARTIN(6),PARTIN(7),
+     *PARTIN(8),PARTIN(9),IPATIN(1),IPATIN(2),
+     *IPATIN(3),IPATIN(4),IPATIN(5),IPATIN(6),
+     *IPATIN(7),IPATIN(8),IPATIN(9)
+  90  FORMAT(//20X,' PARTICLE WENT AWAY FROM NUCLEUS:'/
+     *8X,'X       Y       Z     SIN_TE  COS_TE  SIN_FI  COS_FI ',
+     *' T(GEV)  M(GEV)'/4X,9(F7.3,1X)/
+     *      5X,'EL_CH   LEPTON STRANGE  BARION   ZONE  UNSTAB         ',
+     *         ' NUMBER    IR   '/2X,9(1X,I6,1X))
+C
+C		COS TETA
+      SPTU(4,KSTART)=PARTIN(5)
+C		SIN FI
+      SPTU(5,KSTART)=PARTIN(6)
+C		COS FI
+      SPTU(6,KSTART)=PARTIN(7)
+C		T(GEV)
+      SPTU(7,KSTART)=PARTIN(8)
+C		Q
+      SPTU(8,KSTART)=IPATIN(1)
+C		M(GEV)
+      SPTU(9,KSTART)=PARTIN(9)
+C
+      SPTU(10,KSTART)=IPATIN(8)
+      KSTART=KSTART+1
+      GO TO 5
+C
+   20 CONTINUE
+      IF(IPATIN(4)) 65,66,6
+   65 WRITE(*,*)'  CASCAD POGL ANTINUCL'
+      GO TO 67
+   66 WRITE(*,*)'  CASCAD POGL MEZON'
+      GO TO 67
+   67 NR=3
+      GO TO 13
+C----------------------------------------------------------
+  6   WRITE(*,*)'  CASCAD POGL NUCLEON'
+      ENEXT=ENEXT+PARTIN(8)-TFN(ITEMP)
+      WRITE(*,*)' pogl nucl patin,itemp',partin(8),ITEMP
+      NKVAZ=NKVAZ+1
+      IF(IPATIN(1))5,5,7
+   7  NKZAR=NKZAR+1
+    5 IF(MV) 21,21,28
+   28 DO 29 I=1,9
+      PARTIN(I) = PMEMO(I,MV)
+   29 CONTINUE
+      DO 30 I=1,9
+      IPATIN(I) = IMEMO(I,MV)
+   30 CONTINUE
+      MV=MV-1
+      PRINT 140      
+ 140  FORMAT(//1X,20('='),'    NEXT PARTICLE    ',20('='))
+      GO TO 10
+   21 TEMP1 = 5.07*RSM(N)
+      AMNUCL(1) = TEMP1*AMNUCL(1)
+      AMNUCL(2) = TEMP1*AMNUCL(2)
+      AMNUCL(3) = TEMP1*AMNUCL(3)
+      RETURN
+      END
+
+
+      SUBROUTINE CASCAD(ENEXT,ATWGHT,CHARGE,PNUCL,AMNUCL,KSTART,OBR,
+     *NEL)
+C
+C     CASCADE PROGRAM FOR ALL NONSTRANGE PROJECTILES,
+C     INCLUDING GAMMA QUANTA AND ANTINUCLEONS
+C
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,
+     *RSM(10),RBIG(10),RHOP(10),RHON(10),AF(10),TFP(10),TFN(10)
+     */BEGIN/CM0,T0,T1,T2,ME0,MQ0,MS0,L0
+     */MEMORY/ PMEMO(9,100),IMEMO(9,100)
+     */BLOKC/SPTU(10,250)
+C
+     */IRES/IRES,IAN
+     */EXITON/ NDUR,NKVAZ,NKZAR
+     */IELA/ IELA
+     */IPIB/ IPIB
+     */PAR/ PAR1(9),IPA1(5)
+     */IH/IH,NPROS
+     */IPAR/IPAR
+      COMMON /CEBAF/FERMI(66), RADIUS(66),   Z_COORD(66),
+     #               PART(26), CH_COUNT(26), T_COUNT(26)
+      DIMENSION PARTIN(9),IPATIN(9),V(3),am0(3),pnucl(3),amnucl(3),
+     *PARTNE(9),IPATNE(5)
+
+      real vran(1)
+
+      MV=0
+      NEL=0
+      IELA=0
+      NDUR =0
+      NKVAZ=0
+      NKZAR=0
+      KSTART = 1
+      NITN=0
+C
+      IST=0
+      IS1=0
+      NVZ=0 
+C
+      CALL PINPN (PARTIN,IPATIN,MV,NABS,AM0,P0,T3)
+
+      TEMP1=MQ0
+      TEMP2=L0
+      TEMP3=ME0
+      ATWGHT=ANUCL+TEMP1
+      CHARGE=ZNUCL+TEMP3
+      ENEXT=T3
+C
+      PNUCL(1) = 0.
+      PNUCL(2) = 0.
+      PNUCL(3) = P0
+      AMNUCL(1)=AM0(1)
+      AMNUCL(2)=AM0(2)
+      AMNUCL(3)=AM0(3)
+C
+  10  NABS=0
+      NOUT=0
+      IPAR=0
+      TEMP1=IPATIN(4)
+      TEMP2=IPATIN(1)
+      ITEMP=IPATIN(5)
+      CUTOF1=TEMP1*(POTEN(ITEMP,IPATIN)+
+     *EPS+TEMP2*OBR)
+      IF(IPATIN(4).EQ.-1)CUTOF1=0.
+      IF (PARTIN(8)-CUTOF1) 20,20,11
+ 11   CALL POINTE(NR,PARTIN,IPATIN,PARTNE,IPATNE,NABS,NOUT,
+     *V,U,TIN1,SIGP,SIGN,SIGABS,T0)
+      IF((NOUT.LE.0).AND.(IPATIN(8).EQ.55)) THEN
+         CALL HIST_2D(PARTIN(3)*RSM(N),FERMI,Z_COORD,66,1.0)
+         RIN=SQRT(PARTIN(1)**2+PARTIN(2)**2+PARTIN(3)**2)
+         IF (RIN.GT.1.E-06) THEN
+      CALL HIST_2D(RIN*RSM(N),FERMI,RADIUS,66,
+     #                1./(4.*3.14128*(RIN*RSM(N))**2))
+         ENDIF
+      ENDIF
+C
+      IF(NOUT) 13,13,18
+ 13   CALL TYPINT (NR,PARTIN,IPATIN,PARTNE,IPATNE,
+     *V,U,TIN1,SIGP,SIGN,SIGABS,MV,NP)
+      IF(NR.EQ.3.AND.IPATIN(4).EQ.1) GO TO 6
+C
+      CALL PAULI (PARTIN,IPATIN,V,TFP,TFN,MV,NP,IP)
+      IF(IP.EQ.1.OR.NR.EQ.2)GO TO 10
+      GO TO 1
+C
+    1 CONTINUE
+      IKE=IPATNE(5)
+      ENEXT=ENEXT+TFP(IKE)-PARTNE(8)
+      NDUR=NDUR+1
+      IF(IPAR.EQ.0) GO TO 10
+      IKE=IPA1(5)
+      ENEXT=ENEXT+TFP(IKE)-PAR1(8)
+      NDUR=NDUR+1
+      GO TO 10
+C
+   18 TEMP1 = IPATIN(4)
+      TEMP3 = IPATIN(2)
+      ITEMP = IPATIN(5)
+      IF (IPATIN(1)) 22,22,23
+   22 TEMP2 = 0.
+      GO TO 24
+   23 TEMP2 = IPATIN(1)
+      GO TO 24
+   24 CUTOF2 = POTEN(ITEMP,IPATIN)+
+     *TEMP1*(EPS+OBR*TEMP2)+(1.-TEMP1)*TEMP2*OBR
+      IF(IPATIN(4).EQ.-1)CUTOF2=POTEN(ITEMP,IPATIN)
+      IF (PARTIN(8)-CUTOF2) 20,20,45
+  45  IF(IPATIN(4))40,41,41
+  40  CONTINUE
+      IELA=1
+      GO TO 41
+  41  ATWGHT=ATWGHT-TEMP1
+      TEMP2 = IPATIN(1)
+      CHARGE = CHARGE-TEMP2
+      TEMP3 = SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      TEMP4 = PARTIN(4)*PARTIN(7)
+      TEMP5 = PARTIN(4)*PARTIN(6)
+      PNUCL(1) = PNUCL(1)-TEMP3*TEMP4
+      PNUCL(2) = PNUCL(2)-TEMP3*TEMP5
+      PNUCL(3) = PNUCL(3)-TEMP3*PARTIN(5)
+      AMNUCL(1)=AMNUCL(1)-TEMP3*(PARTIN(3)*TEMP5-PARTIN(2)*PARTIN(5))
+      AMNUCL(2)=AMNUCL(2)-TEMP3*(PARTIN(1)*PARTIN(5)-PARTIN(3)*TEMP4)
+      AMNUCL(3)=AMNUCL(3)-TEMP3*(PARTIN(2)*TEMP4-PARTIN(1)*TEMP5)
+      IF (IRES.NE.0) GO TO 16
+      IF(ENEXT-0.0001) 14,14,16
+   14 IF (ATWGHT-ANUCL) 16,15,16
+   15 IF (CHARGE-ZNUCL) 16,17,16
+   17 NEL=1
+      IELA=0
+      RETURN
+   16 IF(KSTART-250)26,26,25
+   25 PRINT 27
+   27 FORMAT (40X,'MASSIV SPTU EXCEEDED AFTER CASCAD')
+      RETURN
+C		COS TETA
+   26 SPTU(4,KSTART)=PARTIN(5)
+C		SIN FI
+      SPTU(5,KSTART)=PARTIN(6)
+C		COS FI
+      SPTU(6,KSTART)=PARTIN(7)
+C		T(GEV)
+      SPTU(7,KSTART)=PARTIN(8)
+C		Q
+      SPTU(8,KSTART)=IPATIN(1)
+C		M(GEV)
+      SPTU(9,KSTART)=PARTIN(9)
+C
+      SPTU(10,KSTART)=IPATIN(8)
+      KSTART=KSTART+1
+      GO TO 5
+C
+   20 CONTINUE
+      IF(IPATIN(4)) 67,67,6
+   67 NR=3
+      GO TO 13
+C----------------------------------------------------------
+   6  ENEXT=ENEXT+PARTIN(8)-TFN(ITEMP)
+      NKVAZ=NKVAZ+1
+      IF(IPATIN(1))5,5,7
+   7  NKZAR=NKZAR+1
+   5  IF(MV) 21,21,28
+   28 DO 29 I=1,9
+      PARTIN(I) = PMEMO(I,MV)
+      IPATIN(I) = IMEMO(I,MV)
+   29 CONTINUE
+      MV=MV-1
+      GO TO 10
+   21 TEMP1 = 5.07*RSM(N)
+      AMNUCL(1) = TEMP1*AMNUCL(1)
+      AMNUCL(2) = TEMP1*AMNUCL(2)
+      AMNUCL(3) = TEMP1*AMNUCL(3)
+      RETURN
+      END
+      SUBROUTINE TC2
+      COMMON/NPIGL/ NPOGL,F(9)
+      DATA F/9*0./
+      RETURN
+      END
+
+      SUBROUTINE PINPN (PARTIN,IPATIN,MV,NABS,AM0,P0,T3)
+C     CALCULATION OF ENTRY POINT OF PARTICLE IN THE NUCLEUS
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+     */BEGIN/CM0,T0,T1,T2,ME0,MQ0,MS0,L0
+     */IRES/IRES,IAN
+     */PABSR/RMED,SIGMAR
+     */MEMORY/ PMEMO(9,100),IMEMO(9,100)
+     */TOCHKA/ RA
+     */IH/ IH,NPROS
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),TFP(10),TFN(10),
+     *AF(10),PARTIN(9),IPATIN(9),AM0(3),V(3)
+C
+      real vran(1)
+
+      IF(IH.EQ.2) GO TO 40 
+      PARTIN(8)=T0
+      PARTIN(9)=CM0
+      IPATIN(1)=ME0
+      IPATIN(2)=L0
+      IPATIN(3) = MS0
+      IPATIN(4) = MQ0
+      IPATIN(5) = N+1
+      IPATIN(6) = 0
+      IPATIN(7) = 1
+C      
+      CALL PNUM(CM0,ME0,L0,MS0,MQ0,NUM)
+      IPATIN(8)=NUM
+      IF(IRES.EQ.0) GO TO 30
+      KN=0
+C
+ 1    UA=RMED/RSM(N)
+      SA=SIGMAR/RSM(N)
+      UB=UA
+      SB=SA
+ 12   CALL NORMCO(RA,RB,UA,UB,SA,SB,0.0)
+      IF(RA.LE.0.) GO TO 12
+      DO 14 K=1,N+1
+      IF (RA-RBIG(K)) 13,13,14
+ 13   IPATIN(5)=K
+      GO TO 15
+ 14   CONTINUE
+ 15   CONTINUE
+      IF(IPATIN(5).GT.N+1) GO TO 12
+C
+      call ranmar(vran,1)
+      TEMP1=1.-2.0*vran(1)
+      call ranmar(vran,1)
+      TEMP2=6.283185*vran(1)
+      PARTIN(1)=RA*(SQRT(1.0-TEMP1**2)*COS(TEMP2))
+      PARTIN(2)=RA*(SQRT(1.0-TEMP1**2)*SIN(TEMP2))
+      PARTIN(3)=RA*TEMP1
+      PARTIN(4)=-SQRT(1.-TEMP1**2)
+      PARTIN(5)=-TEMP1
+      PARTIN(6)=SIN(TEMP2)
+      PARTIN(7)=COS(TEMP2)
+      PARTIN(8)=T0+POTEN(IPATIN(5),IPATIN)
+      AM0(1)=0.
+      AM0(2)=0.
+      AM0(3)=0.
+      P0=0.
+      CALL VMOM(AM0)
+      IF (IRES) 20,30,16
+ 16   CONTINUE
+      PRINT 100
+ 100  FORMAT(10X,'PIABS    STOP')
+      RETURN
+C
+ 20   CONTINUE
+C      ABSORPTION OF ANTIPROTON
+      IF(IAN-1)21,25,26
+ 21   CALL ANABS(PARTIN,IPATIN,NNA,MV,T3)
+      IF(NNA)27,27,28
+ 25   CALL ANABS1(PARTIN,IPATIN,NNA,MV,T3)
+      IF(NNA)27,27,28
+ 26   CALL ANABS2(PARTIN,IPATIN,NNA,MV,T3)
+      IF(NNA)27,27,28
+ 27   KN=KN+1
+      IF(KN-100)1,1,23
+ 23   PRINT 101 
+ 101  FORMAT( 10X,' ANABS KN>100 STOP')
+      RETURN 
+ 28   DO I=1,9
+      PARTIN(I)=PMEMO(I,MV)
+      IPATIN(I)=IMEMO(I,MV)
+      END DO
+      MV=MV-1
+      RETURN
+C
+ 30   PARTIN(4)=0.
+      PARTIN(5)=1.
+      PARTIN(6)=0.
+      PARTIN(7)=1.
+C
+      call ranmar(vran,1)
+      TEMP1 = vran(1)
+      call ranmar(vran,1)
+      TEMP2 = 6.283185*vran(1)
+      TEMP3 = RBIG(N)*SQRT(TEMP1)
+      PARTIN(1) = TEMP3*COS(TEMP2)
+      PARTIN(2) = TEMP3*SIN(TEMP2)
+      PARTIN(3) = -RBIG(N)*SQRT(1.-TEMP1)
+      P0 = SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      AM0(1)=P0*(PARTIN(3)*PARTIN(4)*PARTIN(6)-PARTIN(2)*PARTIN(5))
+      AM0(2)=P0*(PARTIN(1)*PARTIN(5)-PARTIN(3)*PARTIN(4)*PARTIN(7))
+      AM0(3)=P0*(PARTIN(2)*PARTIN(4)*PARTIN(7)-PARTIN(1)*PARTIN(4)*
+     *PARTIN(6))
+      T3 = 0.
+      CALL REFRAC (PARTIN,IPATIN,NABS,NOUT)
+      IF (IPATIN(5)-N) 33,33,30
+   33 RETURN
+C  
+   40 CALL DEUTR(PARTIN,IPATIN,MV,AM0,P0,T3) 
+      RETURN
+      END
+
+      SUBROUTINE POINTE (NR,PARTIN,IPATIN,PARTNE,IPATNE,NABS,NOUT,
+     *V,U,TIN1,SIGP,SIGN,SIGABS,T0)
+C     BLOCK OF DETERMINING OF INTERACTION POINT INSIDE NUCLEUS.
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),TFP(10),TFN(10),
+     1AF(10),PARTIN(9),IPATIN(9),PARTNE(9),IPATNE(5),V(3)
+      DIMENSION PART_INIT(3), SAVE_GEOM(15), SAVE_RHO(15)
+      DIMENSION A(10)
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+      COMMON/CTINJB/CTINJB
+      COMMON/GAM_CAS/GAM_CAS
+      COMMON/DEP/DEPTH
+      LOGICAL GAM_CAS
+
+      real vran(1)
+
+      NR=0
+      NUM=IPATIN(8)
+      ITQ=IPATIN(4)
+      IF(IPATIN(7).EQ.0) GO TO 51
+      SK = 3.
+      call ranmar(vran,1)
+      TT=vran(1)
+      IF(TT.EQ.0.) then
+         call ranmar(vran,1)
+         TT=vran(1)
+      endif
+      TEMP1 = ALOG(TT)
+      IF(IPATIN(6).EQ.0) GO TO 30
+      IF(NUM.EQ.17) GO TO 10
+      IF(NUM.EQ.10.OR.NUM.EQ.11.OR.NUM.EQ.16) GO TO 20
+      PRINT 888,NUM
+ 888  FORMAT(3X,'UNEXPECTED PARTICLE WITH  NUM =',I5,
+     #'  STOPPED IN POINTE')
+      STOP
+C-----------------------------------------------------------------
+C              OMEGA        NUM=17
+ 10   P=SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      E=PARTIN(8)+PARTIN(9)
+      VR=P/E
+      GAM=SQRT(1.-VR*VR)
+      PLAMD=VR/(GAM*5.06*0.01*RSM(N))
+      S = GEOM(RBIG,PARTIN,IPATIN)
+ 13   CALL PARTN (PARTIN,IPATIN,PARTNE,IPATNE)
+      CALL TINVU (PARTIN(8),PARTIN(9),PARTNE(8),PARTNE(9),PARTIN(4),
+     1PARTIN(5),PARTIN(6),PARTIN(7),PARTNE(4),PARTNE(5),PARTNE(6),
+     2PARTNE(7),V,U,TIN1)
+      CALL SLQEK (L,MS,MQ,KSIN,ME,IPATIN,IPATNE,0,PARTIN,PARTNE)
+      SIGN = SIGMAT (L,MS,MQ,ME,KSIN,0,TIN1,ITQ)
+      CALL SLQEK (L,MS,MQ,KSIP,ME,IPATIN,IPATNE,1,PARTIN,PARTNE)
+      SIGP = SIGMAT (L,MS,MQ,ME,KSIP,0,TIN1,ITQ)
+      SIGABS = SIGMAT (L,MS,MQ,ME,KSIP,3,PARTIN(8),ITQ)
+      ITEMP=IPATIN(5)
+      PLAMB = 10./((RHON(ITEMP)*SIGN+RHOP(ITEMP)*SIGP
+     1+RHOP(ITEMP)*SIGABS)*RSM(N))
+      PLAMBI=PLAMB*PLAMD/(PLAMB+PLAMD)
+      IF (ITEMP.GE.N+1.AND.CTINJB.GT.0.) GO TO 50
+      TEMP2 = SK
+      DELTSI = PLAMBI/TEMP2
+      TEMP5 = AMIN1(S,DELTSI)
+      PIKS = TEMP1+TEMP5/PLAMBI
+      IF (PIKS) 15,15,60
+  15  TEMP1 = PIKS
+      S = S-TEMP5
+      PARTIN(1) = PARTIN(1)+TEMP5*PARTIN(4)*PARTIN(7)
+      PARTIN(2) = PARTIN(2)+TEMP5*PARTIN(4)*PARTIN(6)
+      PARTIN(3) = PARTIN(3)+TEMP5*PARTIN(5)
+      IF (S) 13,16,13
+  16  CALL REFRAC (PARTIN,IPATIN,NABS,NOUT)
+      IF(NABS) 17,17,41
+  17  IF (IPATIN(5)-N-1) 10,50,50
+C-----------------------------------------------------------------
+C             RO        NUM=10,11,16
+ 20   P=SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      E=PARTIN(8)+PARTIN(9)
+      VR=P/E
+      GAM=SQRT(1.-VR*VR)
+      PLAMBI=VR/(GAM*5.06*0.152*RSM(N))
+ 21   S = GEOM(RBIG,PARTIN,IPATIN)
+      ITEMP=IPATIN(5)
+      IF (ITEMP.GE.N+1.AND.CTINJB.GT.0.) GO TO 50
+      TEMP2 = SK
+      DELTSI = PLAMBI/TEMP2
+      TEMP5 = AMIN1(S,DELTSI)
+      PIKS = TEMP1+TEMP5/PLAMBI
+      IF (PIKS) 22,22,62
+ 22   TEMP1 = PIKS
+      S = S-TEMP5
+      PARTIN(1) = PARTIN(1)+TEMP5*PARTIN(4)*PARTIN(7)
+      PARTIN(2) = PARTIN(2)+TEMP5*PARTIN(4)*PARTIN(6)
+      PARTIN(3) = PARTIN(3)+TEMP5*PARTIN(5)
+      IF (S) 21,23,21
+  23  CALL REFRAC (PARTIN,IPATIN,NABS,NOUT)
+      IF(IPATIN(5)-N-1) 20,50,50
+C---------------------------------------------------------------------
+  30    S = GEOM(RBIG,PARTIN,IPATIN)
+      IF(GAM_CAS.AND.(IPATIN(5).EQ.N).AND.(IPATIN(2).EQ.1)
+     *.AND.(CTINJB.LT.0.0)) THEN  ! DIRECT GAMMA SIMULATION
+        A(1)=(RHOP(1)+RHON(1))*RSM(1)**3 ! PROPORTIONAL TO THE NUCLEON
+                                          ! DENSITY
+        DO K=2,N
+          A(K)=(RHOP(K)+RHON(K))*(RSM(K)**3-RSM(K-1)**3)
+        ENDDO
+        DO K=2,N
+          A(K)=A(K)+A(K-1)
+        ENDDO
+        DO K=1,N
+          A(K)=A(K)/A(N)
+        ENDDO   
+                TOT_PATH=DEPTH
+                       DO WHILE (TOT_PATH.GE.DEPTH)        
+        call ranmar(vran,1)
+        INT_ZONE=IDIHOTOMIA(vran(1),A,N)
+        IPATIN(5)=INT_ZONE
+        IF(INT_ZONE.EQ.1) THEN
+           call ranmar(vran,1)
+           RA=RSM(1)*(vran(1)**0.3333)
+        ELSE
+           call ranmar(vran,1)
+           RA=(RSM(INT_ZONE-1)**3+vran(1)*(RSM(INT_ZONE)**3-
+     #                   RSM(INT_ZONE-1)**3))**0.3333
+        ENDIF
+        RA=RA/RSM(N)
+        call ranmar(vran,1)
+        TEMP1=1.-2.*vran(1)
+        TEMP2=SQRT(1.-TEMP1**2)
+        call ranmar(vran,1)
+        BEMP3=6.283185*vran(1)
+        PARTIN(1)=RA*TEMP2*COS(BEMP3)
+        PARTIN(2)=RA*TEMP2*SIN(BEMP3)
+        PARTIN(3)=RA*TEMP1
+!
+        DO IDIM=1,3
+          PART_INIT(IDIM)=PARTIN(IDIM) ! SAVE THE INITIAL POSITION 
+        ENDDO
+        INIT_ZONE=IPATIN(5)
+        NABS_SAVE=NABS
+        NOUT_SAVE=NOUT
+        S_GEOM=0.0
+        S_RHO=0.0
+        N_ZONE=0 
+        PARTIN(5)=-1. ! GO BACK FOR A WHILE 
+
+       DO WHILE (IPATIN(5).LE.N)  ! ESTIMATE THE PATH OF GAMMA INSIDE ...
+         S_PARTIAL=GEOM(RBIG,PARTIN,IPATIN)*1.000005
+         N_ZONE=N_ZONE+1
+         S_GEOM=S_GEOM+S_PARTIAL
+         SAVE_GEOM(N_ZONE)=S_GEOM
+         S_RHO=S_RHO+S_PARTIAL*
+     #                      (RHOP(IPATIN(5))+RHON(IPATIN(5)))
+         SAVE_RHO(N_ZONE)=S_RHO
+         PARTIN(1) = PARTIN(1)+S_PARTIAL*PARTIN(4)*PARTIN(7)
+         PARTIN(2) = PARTIN(2)+S_PARTIAL*PARTIN(4)*PARTIN(6)
+         PARTIN(3) = PARTIN(3)+S_PARTIAL*PARTIN(5)
+         CALL REFRAC (PARTIN,IPATIN,NABS,NOUT)
+       ENDDO
+         TOT_PATH=SAVE_RHO(N_ZONE)*RSM(N)
+
+        DO IDIM=1,3
+          PARTIN(IDIM)=PART_INIT(IDIM) ! RESTORE THE INITIAL POSITION 
+        ENDDO
+        IPATIN(5)=INIT_ZONE
+        NABS=NABS_SAVE
+        NOUT=NOUT_SAVE
+         PARTIN(5)=1. ! GO AHEAD  
+                       ENDDO
+     !
+         CALL PARTN (PARTIN,IPATIN,PARTNE,IPATNE)
+      CALL TINVU (PARTIN(8),PARTIN(9),PARTNE(8),PARTNE(9),PARTIN(4),
+     1PARTIN(5),PARTIN(6),PARTIN(7),PARTNE(4),PARTNE(5),PARTNE(6),
+     2PARTNE(7),V,U,TIN1)
+      CALL SLQEK (L,MS,MQ,KSIN,ME,IPATIN,IPATNE,0,PARTIN,PARTNE)
+      SIGN = SIGMAT (L,MS,MQ,ME,KSIN,0,TIN1,ITQ)
+      CALL SLQEK (L,MS,MQ,KSIP,ME,IPATIN,IPATNE,1,PARTIN,PARTNE)
+      SIGP = SIGMAT (L,MS,MQ,ME,KSIP,0,TIN1,ITQ)
+      SIGABS = SIGMAT (L,MS,MQ,ME,KSIP,3,PARTIN(8),ITQ)
+         NR=1
+         PARTNE(1)=PARTIN(1)
+         PARTNE(2)=PARTIN(2)
+         PARTNE(3)=PARTIN(3)
+         RETURN      ! BYE 
+      ENDIF ! END OF DIRECT GAMMA SIMULATION 
+
+  31    CALL PARTN (PARTIN,IPATIN,PARTNE,IPATNE)
+      CALL TINVU (PARTIN(8),PARTIN(9),PARTNE(8),PARTNE(9),PARTIN(4),
+     1PARTIN(5),PARTIN(6),PARTIN(7),PARTNE(4),PARTNE(5),PARTNE(6),
+     2PARTNE(7),V,U,TIN1)
+      CALL SLQEK (L,MS,MQ,KSIN,ME,IPATIN,IPATNE,0,PARTIN,PARTNE)
+      SIGN = SIGMAT (L,MS,MQ,ME,KSIN,0,TIN1,ITQ)
+      CALL SLQEK (L,MS,MQ,KSIP,ME,IPATIN,IPATNE,1,PARTIN,PARTNE)
+      SIGP = SIGMAT (L,MS,MQ,ME,KSIP,0,TIN1,ITQ)
+      SIGABS = SIGMAT (L,MS,MQ,ME,KSIP,3,PARTIN(8),ITQ)
+      ITEMP=IPATIN(5)
+      PLAMBI = 10./((RHON(ITEMP)*SIGN+RHOP(ITEMP)*SIGP
+     1+RHOP(ITEMP)*SIGABS)*RSM(N))
+      IF(IPATIN(2)) 32,34,32
+  32  IF(-PLAMBI*TEMP1-6.*RHON(1)/RHON(N)) 35,35,33
+  33  PARTIN(8)=T0
+      GO TO 51
+  34  IF (ITEMP.GE.N+1.AND.CTINJB.GT.0.) GO TO 50
+  35  TEMP2 = SK
+      DELTSI = PLAMBI/TEMP2
+      TEMP5 = AMIN1(S,DELTSI)
+      PIKS = TEMP1+TEMP5/PLAMBI
+      IF (PIKS) 36,36,61
+   36 TEMP1 = PIKS
+      S = S-TEMP5
+      PARTIN(1) = PARTIN(1)+TEMP5*PARTIN(4)*PARTIN(7)
+      PARTIN(2) = PARTIN(2)+TEMP5*PARTIN(4)*PARTIN(6)
+      PARTIN(3) = PARTIN(3)+TEMP5*PARTIN(5)
+      IF (S) 31,37,31
+  37  CALL REFRAC (PARTIN,IPATIN,NABS,NOUT)
+      IF(NABS) 38,38,41
+  38  IF (IPATIN(5)-N-1) 30,50,50
+  41  NR=3
+      RETURN
+C---------------------------------------------------------------------
+ 50   TEMP3 = GEOM (RBIG,PARTIN,IPATIN)
+      PARTIN(1) = PARTIN(1)+TEMP3*PARTIN(4)*PARTIN(7)
+      PARTIN(2) = PARTIN(2)+TEMP3*PARTIN(4)*PARTIN(6)
+      PARTIN(3) = PARTIN(3)+TEMP3*PARTIN(5)
+      CALL REFRAC (PARTIN,IPATIN,NABS,NOUT)
+ 51   NOUT = 1
+      RETURN
+C---------------------------------------------------------------------
+ 60   call ranmar(vran,1)
+      TEM=vran(1)
+      TEM1=PLAMBI/PLAMB
+      IF(TEM-TEM1) 61,62,62
+C---------------------------------------------------------------------
+ 61   NR=1
+      GO TO 63
+ 62   NR=2
+      GO TO 63
+ 63   PARTIN(1)=PARTIN(1)-PLAMBI*TEMP1*PARTIN(4)*PARTIN(7)
+      PARTIN(2)=PARTIN(2)-PLAMBI*TEMP1*PARTIN(4)*PARTIN(6)
+      PARTIN(3)=PARTIN(3)-PLAMBI*TEMP1*PARTIN(5)
+      PARTNE(1)=PARTIN(1)
+      PARTNE(2)=PARTIN(2)
+      PARTNE(3)=PARTIN(3)
+      RETURN
+      END
+
+
+      SUBROUTINE TYPINT (NR,PARTIN,IPATIN,PARTNE,IPATNE,
+     &V,U,TIN1,SIGP,SIGN,SIGABS,MV,NP)
+C     BLOCK OF DETERMINING OF INTERACTION TYPE  AND CALCULATION
+C     OF SECONDARY PARTICLES CHARACTERISTICS.
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+     &/IPIB/IPIB
+     &/IPAR/IPAR
+C
+C
+      DIMENSION PARTIN(9),IPATIN(9),PARTNE(9),IPATNE(5),V(3),
+     *RHON(10),RHOP(10),RSM(10),RBIG(10),AF(10),TFP(10),TFN(10)
+C
+      real vran(1)
+
+        NUM=IPATIN(8)
+        ITQ=IPATIN(4)
+C
+   	IPIB=0
+        IF(NR-2) 11,1,2
+C
+C             NR = 2  DECAY
+C
+   1  CALL DECRES(PARTIN,IPATIN,MV,NP,V)
+      RETURN
+C
+C             NR = 3  ABSORP
+C
+   2  CALL POGL(PARTIN,IPATIN,PARTNE,IPATNE,V,U,TIN1)
+      IF(ITQ) 20,14,27
+C
+C             NR = 1  INTERACTION
+C
+  11  MTEMP=IPATIN(5)
+      BETABS=RHOP(MTEMP)*SIGABS/(RHOP(MTEMP)*SIGP+
+     *RHON(MTEMP)*SIGN+RHOP(MTEMP)*SIGABS)
+      call ranmar(vran,1)
+      IF(vran(1)-BETABS) 14,14,13
+  14  CALL ABSORP (PARTIN,IPATIN,PARTNE,IPATNE,MV,NP,V)
+      IPAR=1
+      IPIB=1
+      RETURN
+C
+ 13   call ranmar(vran,1)
+      IF((NUM.EQ.55).AND.(TIN1.GT.0.151).AND.
+     *                        (vran(1).LE.(5.-TIN1))) THEN
+      !  imply linear probability interpolation in order to have a
+      !  smooth transition in the region 4-5 GeV of gamma energy
+         CALL GENER(PARTIN,IPATIN,IPATNE,TIN1,V,U,MV,NP)
+      !  call a new gamma-nucleon generator and go back
+         RETURN
+      ENDIF
+      CALL SLQEK (L,MS,MQ,KSI,ME,IPATIN,IPATNE,IPATNE(1),PARTIN,
+     *PARTNE)
+      COMP1=SIGMAT(L,MS,MQ,ME,KSI,1,TIN1,ITQ)
+      COMP2=SIGMAT(L,MS,MQ,ME,KSI,2,TIN1,ITQ)
+      COMP0=SIGMAT(L,MS,MQ,ME,KSI,0,TIN1,ITQ)
+      BETAEL=(COMP1+COMP2)/COMP0
+      IF(BETAEL.GT.0.99) THEN
+         BETAEL=1.000  ! CHECK SOME ERRORS COMING FROM LINEAR 
+                       ! INTERPOLATION DUE TO A LIMITED ACCURACY
+      ENDIF
+
+      call ranmar(vran,1)
+      IF(vran(1)-BETAEL) 16,16,15
+  16  CALL ELEX(V,U,TIN1,PARTIN,IPATIN,PARTNE,IPATNE,MV,NP,L,MS,
+     *MQ,KSI,ME)
+      RETURN
+C
+  15  IF(TIN1-100.0) 20,20,18
+  18  PRINT 24
+  24  FORMAT(/45X,24H SUPERENERGY INTERACTION//)
+      RETURN
+C
+  20  CALL BINEL(PARTIN,IPATIN,IPATNE,L,MS,MQ,KSI,ME,V,U,TIN1,
+     *MV,NP,NIN,NR)
+C	
+      IF(NIN) 11,27,11
+C
+  27  RETURN
+      END
+
+
+      SUBROUTINE PAULI(PARTIN,IPATIN,V,TFP,TFN,MV,NP,IP)
+      COMMON/MEMORY/PMEMO,IMEMO
+     */PAU/PMEM(9,15),IMEM(9,15)
+     */PAUP/ETOT,PX,PY,PZ
+      DIMENSION PMEMO(9,100),IMEMO(9,100),PARTIN(9),IPATIN(9),V(3),
+     *P(3),PSTAR(3),TFP(10),TFN(10),PARTNE(9)
+C
+C               BLOCK OF PAULI PRINCIPLE.
+C
+         ETOT=0.
+         PX=0.
+         PY=0.
+         PZ=0.
+      NAVNI=0
+      IF(NAVNI-1) 10,11,10
+  10  J1=IPATIN(5)
+      GO TO 12
+  11  J1=1
+      GO TO 12
+  12  L=1
+  22  IF(NP-2) 13,23,13
+  23  IF(L-2) 13,17,13
+  13  MTEMP=MV+L
+      PSTAR(1)=PMEMO(1,MTEMP)
+      PSTAR(2)=PMEMO(2,MTEMP)
+      PSTAR(3)=PMEMO(3,MTEMP)
+      CALL CINEMA(PSTAR,V,P,CT,ST,CFI,SFI,T,PMEMO(9,MTEMP))
+      PMEMO(1,MTEMP)=PARTIN(1)
+      PMEMO(2,MTEMP)=PARTIN(2)
+      PMEMO(3,MTEMP)=PARTIN(3)
+      PMEMO(4,MTEMP)=ST
+      PMEMO(5,MTEMP)=CT
+      PMEMO(6,MTEMP)=SFI
+      PMEMO(7,MTEMP)=CFI
+      PMEMO(8,MTEMP)=T
+          PX=PX+P(1)
+          PY=PY+P(2)
+          PZ=PZ+P(3)
+          ETOT=ETOT+PMEMO(9,MTEMP)+T
+      IMEMO(5,MTEMP)=IPATIN(5)
+      IMEMO(6,MTEMP)=ISTAB(IMEMO(8,MTEMP),T,PMEMO(9,MTEMP),P)
+      IMEMO(7,MTEMP)=1
+      IF(IMEMO(8,MTEMP).EQ.55) IMEMO(7,MTEMP)=0
+C
+      IF(IMEMO(4,MTEMP)-1) 16,14,16
+  14  IF(IMEMO(3,MTEMP)) 16,15,16
+  15  TEMP=IMEMO(1,MTEMP)
+      IF(PMEMO(8,MTEMP)-TFP(J1)*TEMP-TFN(J1)*(1.-TEMP))21,21,16
+  16  IF(L-NP) 17,18,18
+  17  L=L+1
+      GO TO 22
+  18  DO  K=1,NP
+         DO  I=1,9
+	   PMEM(I,K)=PMEMO(I,MV+K)
+	   IMEM(I,K)=IMEMO(I,MV+K)
+         END DO
+      END DO
+      IF(NP.NE.2) GO TO 19
+         DO  I=1,9
+	   PMEM(I,2)=PMEMO(I,MV+3)
+	   IMEM(I,2)=IMEMO(I,MV+3)
+         END DO
+  19    DO  I=1,9
+         PARTIN(I)=PMEMO(I,MV+3)
+         IPATIN(I)=IMEMO(I,MV+3)
+        END DO
+C
+       IF(NP-3) 24,24,20
+   20  NTEMP=MV+NP
+        DO  I=1,9
+         PMEMO(I,MV+3)=PMEMO(I,NTEMP)
+         IMEMO(I,MV+3)=IMEMO(I,NTEMP)
+        END DO
+C
+  24  MV=MV+NP-1
+      IP=0
+      RETURN
+  21  IP=1
+      RETURN
+      END
+
+
+      SUBROUTINE REFRAC (PARTIN,IPATIN,NABS,NOUT)
+C     BLOCK OF CALCULATION OF ENERGY AND DIRECTION CHANGE OF
+C     PARTICLE WHEN IT IS ENTERING IN THE NEXT ZONE OF NUCLEUS.
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,
+     *RHOP,RHON,AF,TFP,TFN
+      COMMON/CTINJB/ CTINJB
+      DIMENSION PARTIN(9),IPATIN(9),TFP(10),TFN(10),AF(10),
+     *RSM(10),RBIG(10),RHOP(10),RHON(10)
+      NABS = 0
+      NOUT = 0
+      RIN = SQRT(PARTIN(1)**2+PARTIN(2)**2+PARTIN(3)**2)
+      IF(RIN.LE.0.002) THEN   ! S=0 IN THE CENTER OF NUCLEUS
+        IF(IPATIN(5).NE.1) THEN
+           PRINT 109,IPATIN(5),RBIG(IPATIN(5)-1),RIN
+           PRINT 200,RBIG,PARTIN,IPATIN
+        ENDIF
+        RETURN               ! WHEN RIN=0 DO NOT CHANGE ZONE
+      ENDIF
+      NZONE=1
+      DO WHILE ((ABS(RIN-RBIG(NZONE)).GT.0.002).AND.(NZONE.LE.10))
+       NZONE=NZONE+1
+      ENDDO
+        IF(NZONE.EQ.11) THEN ! ALARM: PARTICLE IS NOT ON THE BOUNDARY
+           PRINT 199,IPATIN(5),RIN
+           PRINT 200,RBIG,PARTIN,IPATIN
+           PRINT 333
+           STOP
+        ENDIF
+        DO ICYCLE=1,3 ! CORRECT A LITTLE BIT ...
+           PARTIN(ICYCLE)=PARTIN(ICYCLE)*RBIG(NZONE)/RIN
+        ENDDO
+      RIN = SQRT(PARTIN(1)**2+PARTIN(2)**2+PARTIN(3)**2)
+      CTINJB=(PARTIN(1)*PARTIN(4)*PARTIN(7)+
+     1PARTIN(2)*PARTIN(4)*PARTIN(6)+PARTIN(3)*PARTIN(5))/RIN
+      IF (CTINJB.GE.0.0) THEN
+          JR1 = IPATIN(5)+1
+      ELSE
+          JR1 = IPATIN(5)-1
+      ENDIF
+
+      IF((JR1.NE.NZONE).AND.(JR1.NE.NZONE+1)) THEN
+          IF(IPATIN(5).EQ.NZONE) THEN
+              JR1 = NZONE+1
+              DO ICYCLE=1,3 ! PULL IT OFF SINCE CTINJB=0 AND ACCURACY POOR; 
+                 PARTIN(ICYCLE)=PARTIN(ICYCLE)*1.001      ! OTHERWISE
+              ENDDO                                       ! INFINIT LOOP    
+                                                          ! IN 
+                                                          ! DUE TO S=0
+          ELSEIF(IPATIN(5).EQ.NZONE+1) THEN
+              JR1 = NZONE
+              DO ICYCLE=1,3 ! PULL IT OFF SINCE CTINJB=0 AND ACCURACY POOR; 
+                 PARTIN(ICYCLE)=PARTIN(ICYCLE)*0.999      ! OTHERWISE
+              ENDDO                                       ! INFINIT LOOP    
+                                                          ! IN POINTE
+                                                          ! DUE TO S=0
+          ELSE
+              PRINT 444, RIN, IPATIN(5)
+          ENDIF      
+      ENDIF
+      TINJ1=PARTIN(8)+POTEN(JR1,IPATIN)-POTEN(IPATIN(5),IPATIN)
+      IF(TINJ1)23,23,22
+  23  NABS=1
+      RETURN
+  22     PARTIN(8) = TINJ1
+         IPATIN(5) = JR1
+      IF (JR1-N-2) 21,20,20
+  20  NOUT=1
+  21  CONTINUE
+      RETURN
+ 109     FORMAT(1X,'REFRAC LOWBOUND: ZONE=',I3,' RBIG(ZONE-1)=',
+     *         F15.9,' .GT.',' RIN=',F15.9)
+ 199     FORMAT(1X,'REFRAC ALARM: ZONE=',I3,                 
+     *                       '  RIN=',F15.9)
+ 200  FORMAT(1X,' RBIG=',10F10.6/'  PARTIN=',9F10.6/'  IPATIN=',9I3)
+ 333  FORMAT(5X,' STOPPED IN REFRAC')
+ 444  FORMAT(5X,'REFRAC INPUT INCORRECT, RIN= ',F15.9,'  ZONE=',I3)
+      END
+
+
+
+      SUBROUTINE DEUTR(PARTIN,IPATIN,MV,AM0,P0,T3)
+C
+C  FOR INTERACTION ANTIDEUTRON WITH NUCLEUS
+C
+      COMMON/BLNUCL/ANUCL,ZNUCL,EPS,VPI,N,RSM(10),RBIG(10),RHOP(10),
+     *RHON(10),AF(10),TFP(10),TFN(10)
+     */BEGIN/CM0,T0,T1,T2,ME0,MQ0,MS0,L0
+     */MEMORY/PMEMO(9,100),IMEMO(9,100)
+     */IH/IH,NPROS
+      DIMENSION XS(2),YS(2),ZS(2),PXS(2),PYS(2),PZS(2),X(2),Y(2),Z(2),
+     *PX(2),PY(2),PZ(2),IE(2),PARTIN(9),IPATIN(9),AM0(3)
+C
+
+      real vran(1)
+
+ 100  call ranmar(vran,1)
+      CK=1.-2.*vran(1)
+      SK=SQRT(1.-CK**2)
+      call ranmar(vran,1)
+      PK=6.283185*vran(1)
+C
+        ZS(1)=2.158*CK
+        XS(1)=2.158*SK*COS(PK)
+        YS(1)=2.158*SK*SIN(PK)
+C
+      XS(2)=-XS(1)
+      YS(2)=-YS(1)
+      ZS(2)=-ZS(1)
+C
+ 10   call ranmar(vran,1)
+      A=10.*vran(1)
+      call ranmar(vran,1)
+      IF(vran(1)-(4.*A**2)/(1.+A**2)**2)11,11,10
+C
+ 11   PS1=SQRT(20.962*A)/100.
+      call ranmar(vran,1)
+      CTS=1.-2.*vran(1)
+      call ranmar(vran,1)
+      PT=6.283185*vran(1)
+      STS=SQRT(1.-CTS**2)
+C
+         PXS(1)=PS1*STS*COS(PT)
+         PYS(1)=PS1*STS*SIN(PT)
+         PZS(1)=PS1*CTS
+C
+      PXS(2)=-PXS(1)
+      PYS(2)=-PYS(1)      
+      PZS(2)=-PZS(1)
+C
+      call ranmar(vran,1)
+      IF(vran(1)-0.5)12,12,13
+C
+ 12   IE(1)=ME0
+      IE(2)=0
+      GO TO 14
+C
+ 13   IE(1)=0
+      IE(2)=ME0
+C
+ 14   call ranmar(vran,1)
+      TEMP1=vran(1)
+      call ranmar(vran,1)
+      TEMP2=6.283185*vran(1) 
+      TEMP3=(1.+2.158/RSM(N))*SQRT(TEMP1)
+C
+        X0=TEMP3*COS(TEMP2)
+        Y0=TEMP3*SIN(TEMP2)
+        Z0=-(1.+2.158/RSM(N))*SQRT(1.-TEMP1)
+C
+      I=1
+      NU=0
+C--------------------------------------------------------------
+ 15   X(I)=XS(I)/RSM(N)+X0 
+      Y(I)=YS(I)/RSM(N)+Y0
+      Z(I)=ZS(I)/RSM(N)+Z0
+C
+      R=SQRT(X(I)**2+Y(I)**2)
+C
+      IF(R-1.)16,17,17
+C
+ 16   NU=1
+C
+ 17   IF(I-2)18,19,19
+C
+ 18   I=I+1
+C--------------------------------------------------------------
+      GO TO 15
+C-------------------------------------------------------------- 
+ 19   IF(NU)20,20,21
+ 20   NPROS=NPROS+1
+C
+      GO TO 14
+C
+ 21   I=1
+C
+      TEMP1=SQRT(T0*(T0+2.*CM0))/(T0+CM0)
+      TEMP2=SQRT(1.-TEMP1**2)
+      TEMP3=(1./TEMP2-1.)/TEMP1
+      TEMP4=0.94*TEMP1/TEMP2
+C
+ 23      PX(I)=PXS(I)+PZS(I)*TEMP3
+         PY(I)=PYS(I)+PZS(I)*TEMP3
+         PZ(I)=PZS(I)+PZS(I)*TEMP3+TEMP4
+C
+      IF(I-2)24,25,25
+C
+ 24   I=I+1
+      GO TO 23
+C
+ 25   MV=MV+1
+      PMEMO(1,1)=X(1)	
+      PMEMO(2,1)=Y(1)	
+      PMEMO(3,1)=Z(1)	
+      PMEMO(9,1)=0.94	
+      IMEMO(1,1)=IE(1)	
+      IMEMO(2,1)=0	
+      IMEMO(3,1)=0	
+      IMEMO(4,1)=ME0	
+      IMEMO(5,1)=N+1	
+      IMEMO(6,1)=0 
+      IMEMO(7,1)=1 
+      CALL PNUM(0.94,IE(1),0,0,ME0,NUM)
+      IMEMO(8,1)=NUM
+
+C
+      P=SQRT(PX(1)**2+PY(1)**2+PZ(1)**2)
+C
+      PMEMO(5,1)=PZ(1)/P
+      PMEMO(4,1)=SQRT(1.-PMEMO(5,1)**2) 
+      IF(PMEMO(4,1).LE.1.0E-07)GO TO 101
+      GO TO 102
+ 101  CONTINUE
+C      	PRINT *,'P,PMEMO(4,1)',P,PMEMO(4,1)
+      GO TO 100
+ 102  IF(PMEMO(4,1).EQ.0.0) THEN
+        PMEMO(6,1)=0.0
+        PMEMO(7,1)=1.0
+      ELSE  
+        PMEMO(6,1)=PY(1)/(P*PMEMO(4,1))
+        PMEMO(7,1)=PX(1)/(P*PMEMO(4,1))
+      ENDIF
+      PMEMO(8,1)=SQRT(P**2+0.8836)-0.94
+C
+      PARTIN(1)=X(2)
+      PARTIN(2)=Y(2)
+      PARTIN(3)=Z(2)
+      PARTIN(9)=0.94
+      IPATIN(1)=IE(2)
+      IPATIN(2)=0
+      IPATIN(3)=0
+      IPATIN(4)=ME0
+      IPATIN(5)=N+1
+      IPATIN(6)=0
+      IPATIN(7)=1
+      CALL PNUM(0.94,IE(2),0,0,ME0,NUM)
+      IPATIN(8)=NUM
+C
+      P=SQRT(PX(2)**2+PY(2)**2+PZ(2)**2)
+      PARTIN(5)=PZ(2)/P
+      PARTIN(4)=SQRT(1.-PARTIN(5)**2)
+      IF(PARTIN(4).EQ.0.0)THEN
+        PARTIN(6)=0.0
+        PARTIN(7)=1.0
+      ELSE
+        PARTIN(6)=PY(2)/(P*PARTIN(4))
+        PARTIN(7)=PX(2)/(P*PARTIN(4))
+      ENDIF
+      PARTIN(8)=SQRT(P**2+0.8836)-0.94
+      P0=SQRT(T0*(T0+2.*CM0))
+C
+         AM0(1)=-Y0*P0
+         AM0(2)=X0*P0
+         AM0(3)=0.
+         T3=0.
+       RETURN
+       END
+

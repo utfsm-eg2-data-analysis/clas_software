@@ -1,0 +1,226 @@
+make -e -f /user/a/alaoui/software/clas_software_ver1/packages/cms/clas_lib.mk all
+make[1]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: bankdefs <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/bankdefs'
+rm -f clasbanks.h # remove any stale local versions
+make -f /user/a/alaoui/software/clas_software_ver1/packages/cms/Makefile lib
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/bankdefs'
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/bankdefs'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/bankdefs'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: bos <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/bos'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/bos'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: c_bos_io <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/c_bos_io'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/c_bos_io'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: bosio <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/bosio'
+make -f /user/a/alaoui/software/clas_software_ver1/packages/cms/Makefile CREATED_C="bosiodump.c bosiodiff.c bosioserver.c bosiosubjob.c" lib
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/bosio'
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/bosio'
+make -f /user/a/alaoui/software/clas_software_ver1/packages/cms/dll.mk CREATED_C="bosiodump.c bosiodiff.c bosioserver.c bosiosubjob.c" \
+	CREATED_F= \
+	LIBNAMES="bosio crypt" \
+	 shlib
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/bosio'
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/bosio'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/bosio'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: cc <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/cc'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/cc'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: c_cern <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/c_cern'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/c_cern'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: dc <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/dc'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/dc'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: ec <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ec'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ec'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: eloss <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/eloss'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/eloss'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: fpack <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/fpack'
+make -e -f /user/a/alaoui/software/clas_software_ver1/packages/cms/Makefile lib
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/fpack'
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/fpack'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/fpack'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: fputil <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/fputil'
+make -e -f /user/a/alaoui/software/clas_software_ver1/packages/cms/Makefile lib
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/fputil'
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/fputil'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/fputil'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: online_dummy <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/online_dummy'
+make -e -f /user/a/alaoui/software/clas_software_ver1/packages/cms/Makefile lib
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/online_dummy'
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/online_dummy'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/online_dummy'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: pid <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/pid'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/pid'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: recutl <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/recutl'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/recutl'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: sc <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/sc'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/sc'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: st <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/st'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/st'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: sh <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/sh'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/sh'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: tag <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/tag'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/tag'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: tcl <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/tcl'
+make[2]: Nothing to be done for `lib'.
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/tcl'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: trk <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/trk'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/trk'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: vertex <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/vertex'
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/vertex'
+++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>>>>> lib: ClasTool <<<<<<<<<<<<<<<<<<
+++++++++++++++++++++++++++++++++++++++++
+make[2]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool'
+for i in ClasBanks VirtualReader DSTReader TClasTool FillBank PartSieve NT10Reader MapUtils Filter Gsim; do \
+	make -e -C $i shlib; \
+done
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TCCPBClassDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TCCPBClass.h TCCPBClassLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TCCPBClassDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TVirtualReaderDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TVirtualReader.h TVirtualReaderLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TVirtualReaderDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TDSTReaderDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TDSTReader.h TDSTReaderLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TDSTReaderDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TClasToolDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TClasTool.h TClasToolLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TClasToolDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank'
+make[3]: Nothing to be done for `shlib'.
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/PartSieve'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TPartSieveDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TPartSieve.h TPartSieveLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TPartSieveDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/PartSieve'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TNT10ReaderDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TNT10Reader.h TNT10ReaderLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TNT10ReaderDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/MapUtils'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TMapUtilsDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql TMapUtils.h TMapUtilsLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TMapUtilsDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/MapUtils'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TFilterDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/PartSieve -I/usr/include/mysql TFilter.h TFilterLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TFilterDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter'
+make[3]: Entering directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Gsim'
+/user/a/alaoui/software/root/6.20.04/bin/rootcint -f dicts/Linux64RHEL7/TGsimDict.h -c -p -I. -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/ClasBanks -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/TClasTool -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/VirtualReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/DSTReader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/NT10Reader -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/FillBank -I/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Filter -I/usr/include/mysql -I/user/a/alaoui/software/clas_software_ver1/packages/bosio TGsim.h TGsimLinkDef.h
+warning: Please remove the deprecated flag -c.
+warning: Please remove the deprecated flag -p.
+Error: Inconsistent set of arguments detected: overwrite of dictionary file forced but no filename specified.
+Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+
+make[3]: *** [dicts/Linux64RHEL7/TGsimDict.h] Error 1
+make[3]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool/Gsim'
+make[2]: *** [shlib] Error 2
+make[2]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages/ClasTool'
+make[1]: *** [ClasTool] Error 2
+make[1]: Leaving directory `/user/a/alaoui/software/clas_software_ver1/packages'
+make: *** [lib] Error 2

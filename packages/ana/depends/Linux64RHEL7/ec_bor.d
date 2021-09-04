@@ -1,0 +1,1 @@
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/libana.a(ec_bor.o) ./depends/Linux64RHEL7/ec_bor.d: 

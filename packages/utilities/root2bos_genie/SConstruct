@@ -1,0 +1,75 @@
+import os
+env = Environment()
+
+OSENV   = os.environ
+
+ROOTSYS = OSENV['ROOTSYS']
+HOME = OSENV['HOME']
+SOFT = OSENV['SOFT']
+CLASPACK = OSENV['CLAS_PACK']
+CLASLIBDIR = OSENV['CLAS_LIB']
+CERNLIBDIR = OSENV['CERN_LIB']
+arch       = OSENV['ARCHT']
+
+mm = '-m'+arch[:len(arch)-3]
+#print arch
+#exit(2)
+
+cxx_flags = [mm]+['-g', '-Wall', '-fPIC', '-pthread','-Wno-write-strings']
+#cxx_flags = [mm]+['-g', '-Wall', '-fPIC', '-Wno-deprecated', '-pthread']
+env.Append(CXXFLAGS = cxx_flags)
+#env.Append(CFLAGS = cxx_flags)
+env.Append(LINKFLAGS = cxx_flags)
+
+# root include dir
+rootincdir = os.popen('$ROOTSYS/bin/root-config --incdir').readline()
+rootincdir = rootincdir[:len(rootincdir)-1]
+
+# clas include dir
+clasincdir = CLASPACK+"/include"
+
+######################################
+# All includes
+######################################
+incpath = [rootincdir]+[clasincdir]+['./include','.']
+env.Append(CPPPATH = incpath)
+
+# root lib dir
+rootlibdir = os.popen('$ROOTSYS/bin/root-config --libdir').readline()
+rootlibdir = rootlibdir[:len(rootlibdir)-1]
+
+# cern lib dir
+cernlibdir = CERNLIBDIR
+
+# clas lib dir
+claslibdir = CLASLIBDIR
+
+############################
+# All lib path
+############################
+libpath = [rootlibdir]+[cernlibdir]+[claslibdir]+['.']
+env.Append(LIBPATH = libpath)
+
+############################
+# libraries
+############################
+
+# root libraries
+rootlibs = os.popen('$ROOTSYS/bin/root-config --glibs').readline()[:-1].split()
+rlibs    = []
+for l in rootlibs:
+  if l[:2] == '-l':
+    rlibs += [l[2:]]
+
+clibs = ["pdflib804", "packlib", "mathlib", "kernlib", "nsl", "crypt", "dl"]
+
+# All libs
+libs = rlibs+clibs+['bosio']+['gfortran']
+
+env.Append(LIBS = libs)
+
+# Sources
+Sources = Glob('./*.cc')
+
+Target = "root2bos.exe"
+env.Program(source = Sources, target = Target)

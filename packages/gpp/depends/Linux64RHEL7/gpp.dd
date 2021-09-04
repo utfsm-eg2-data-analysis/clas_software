@@ -1,0 +1,5 @@
+./depends/Linux64RHEL7/.dd /user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/.o:  ../include/bosddl.h ../include/ec.h ../include/clas_cern.h \
+ ../include/particleType.h ../include/utility.h ../include/makebanks.h \
+ ../include/status.h ../include/map_manager.h ../include/kinematics.h \
+ ../include/sc.h ../include/call.h ../include/bitflags.h ../include/pid.h \
+ ../include/make_TGEO.h ../include/tagcal_cmn.h

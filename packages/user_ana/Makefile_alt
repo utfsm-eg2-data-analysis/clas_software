@@ -1,0 +1,82 @@
+#! gnumake
+
+#---------------------------------------------------
+# The D. P. Weygand Makefile
+#---------------------------------------------------
+include $(CLAS_CMS)/Rules.make
+
+ifdef USEBOSIO
+BOSLIB= -lbosio$(ADD_DEBUG)
+else
+BOSLIB = -lfputil$(ADD_DEBUG) -lbos$(ADD_DEBUG) -lfpack$(ADD_DEBUG)
+endif
+MYSQL_LIB_PATH = $(MYSQL_ROOT_PATH)/lib/mysql
+MYSQL_INCLUDE_PATH = $(MYSQL_ROOT_PATH)/include
+ifndef MAP
+	MAPLIB = -lcaldbMap$(ADD_DEBUG) -lclasutil$(ADD_DEBUG) -L$(MYSQL_LIB_PATH) -lmysqlclient -lz $(TCLLIB) 
+INCLUDE += -I$(MYSQL_INCLUDE_PATH)
+else
+	MAPLIB = -lmapmanager$(ADD_DEBUG)
+endif
+
+STDLIBS= -L$(LOCAL_LIB) -L$(CLAS_LIB)   -lclasEvent$(ADD_DEBUG) -leloss$(ADD_DEBUG) -lmomentum_correction$(ADD_DEBUG) -lg10pcor$(ADD_DEBUG) -lPcor$(ADD_DEBUG) -lvkTAGR$(ADD_DEBUG) -lplib$(ADD_DEBUG) -lpid$(ADD_DEBUG) -lec$(ADD_DEBUG) -lcc$(ADD_DEBUG) -lsc$(ADD_DEBUG) -ltrk$(ADD_DEBUG) -ldc$(ADD_DEBUG) -llac$(ADD_DEBUG) -lst$(ADD_DEBUG)  -lpid$(ADD_DEBUG) -ltag$(ADD_DEBUG) -ltagM$(ADD_DEBUG) -lscaler$(ADD_DEBUG) -lvertex$(ADD_DEBUG) -lbankdefs$(ADD_DEBUG) -lclasutil$(ADD_DEBUG)   -lc_bos_io$(ADD_DEBUG) -lrecutl$(ADD_DEBUG) -litape$(ADD_DEBUG) $(BOSLIB) -lc_bos_io$(ADD_DEBUG) $(MAPLIB)  -lonline_dummy$(ADD_DEBUG) -lc_cern$(ADD_DEBUG) -lpp$(ADD_DEBUG) -lpwaUtil$(ADD_DEBUG) 
+
+#use the newest cern library
+CERNPATH= $(CERN_ROOT)/lib
+CERNLIB= -L$(CERNPATH)  -lpacklib -lmathlib -lkernlib
+MATHLIB= -lm 
+
+FINCLUDE :=-I../ana $(FINCLUDE) -I./include
+INCLUDE := $(INCLUDE) -I./include 
+CCCSRCS:= 
+
+CCSRCS:= 
+
+fSRCS:=  
+
+FSRCS:=  hbook_init.F  user_bevt.F  user_brun.F  user_epics.F  user_erun.F  user_evnt.F  user_init.F  user_last.F  user_scaler.F  user_tcl_init.F  user_xtra.F  
+
+SRCS:=  
+
+fOBJS= $(patsubst %.f,$(OBJDIR)/%.o,$(fSRCS))
+FOBJS= $(patsubst %.F,$(OBJDIR)/%.o,$(FSRCS))
+OBJS= $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
+
+CCOBJS= $(patsubst %.cc,$(OBJDIR)/%.o,$(CCSRCS))
+
+CCCOBJS= $(patsubst %.C,$(OBJDIR)/%.o,$(CCCSRCS))
+
+all: lib  install
+
+LIBS= $(LOCAL_LIB)/libuser_ana$(ADD_DEBUG).a
+lib: $(LIBS)
+
+$(LIBS): $(OBJS) $(FOBJS) $(fOBJS) $(CCOBJS) $(CCCOBJS)
+	$(VDIR) $(LOCAL_LIB)
+	ar rv $@ $?
+install: 
+	$(VDIR) $(LOCAL_BIN)
+	/usr/bin/install user_control.inc $(LOCAL_INC)
+env:
+	@echo EXE $(EXE)
+	@echo LIBS $(LIBS)
+	@echo CC $(CC)
+	@echo FC $(FC)
+	@echo OS_NAME $(OS_NAME)
+	@echo INCLUDE $(INCLUDE)
+	@echo BOSPATH $(BOSPATH)
+	@echo FLIB $(FLIB)
+	@echo OBJS $(OBJS)
+	@echo CFLAGS $(CFLAGS)
+	@echo FFLAGS $(FFLAGS)
+	@echo CCLAGS $(CCFAGS)
+	@echo INCLUDE $(INCLUDE)
+	@echo LOCAL_LIB $(LOCAL_LIB)
+	@echo LOCAL_BIN $(LOCAL_BIN)
+	@echo LOCAL_INCLUDE $(LOCAL_INCLUDE)
+	@echo OBJDIR $(OBJDIR)
+	@echo MYSQL_ROOT_PATH $(MYSQL_ROOT_PATH)
+	@echo MYSQL_LIB_PATH $(MYSQL_LIB_PATH)
+	@echo MYSQL_INCLUDE_PATH $(MYSQL_INCLUDE_PATH)
+	@echo MAPLIB $(MAPLIB)
+	@echo STDLIBS $(STDLIBS)

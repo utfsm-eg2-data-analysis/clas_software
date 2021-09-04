@@ -1,0 +1,106 @@
+#! gnumake
+
+#---------------------------------------------------
+# The D. P. Weygand Makefile
+#---------------------------------------------------
+include $(CLAS_CMS)/Rules.make
+
+ifdef USEBOSIO
+BOSLIB= -lbosio$(ADD_DEBUG)
+else
+BOSLIB = -lfputil$(ADD_DEBUG) -lbos$(ADD_DEBUG) -lfpack$(ADD_DEBUG)
+endif
+MYSQL_LIB_PATH = $(MYSQL_ROOT_PATH)/lib/mysql
+MYSQL_INCLUDE_PATH = $(MYSQL_ROOT_PATH)/include
+ifndef MAP
+	MAPLIB = -lcaldbMap$(ADD_DEBUG) -lclasutil$(ADD_DEBUG) -L$(MYSQL_LIB_PATH) -lmysqlclient -lz $(TCLLIB) 
+INCLUDE += -I$(MYSQL_INCLUDE_PATH)
+else
+	MAPLIB = -lmapmanager$(ADD_DEBUG)
+endif
+
+STDLIBS= -L$(LOCAL_LIB) -L$(CLAS_LIB)   -lclasEvent$(ADD_DEBUG) -leloss$(ADD_DEBUG) -lmomentum_correction$(ADD_DEBUG) -lg10pcor$(ADD_DEBUG) -lPcor$(ADD_DEBUG) -lvkTAGR$(ADD_DEBUG) -lplib$(ADD_DEBUG) -lpid$(ADD_DEBUG) -lec$(ADD_DEBUG) -lcc$(ADD_DEBUG) -lsc$(ADD_DEBUG) -ltrk$(ADD_DEBUG) -ldc$(ADD_DEBUG) -llac$(ADD_DEBUG) -lst$(ADD_DEBUG)  -lpid$(ADD_DEBUG) -ltag$(ADD_DEBUG) -ltagM$(ADD_DEBUG) -lscaler$(ADD_DEBUG) -lvertex$(ADD_DEBUG) -lbankdefs$(ADD_DEBUG) -lclasutil$(ADD_DEBUG)   -lc_bos_io$(ADD_DEBUG) -lrecutl$(ADD_DEBUG) -litape$(ADD_DEBUG) $(BOSLIB) -lc_bos_io$(ADD_DEBUG) $(MAPLIB)  -lonline_dummy$(ADD_DEBUG) -lc_cern$(ADD_DEBUG) -lpp$(ADD_DEBUG) -lpwaUtil$(ADD_DEBUG) 
+
+#use the newest cern library
+CERNPATH= $(CERN_ROOT)/lib
+CERNLIB= -L$(CERNPATH)  -lpacklib -lmathlib -lkernlib
+MATHLIB= -lm 
+
+FINCLUDE := $(FINCLUDE) -I./include
+INCLUDE := $(INCLUDE) -I./include 
+CCCSRCS:= 
+
+CCSRCS:= 
+
+fSRCS:=  
+
+FSRCS:=  back_2_clas.F  builder_brun.F  define_id.F  ec_do_match.F  el_cut.F  event_bld.F  evnt_2_bos.F  evnt_set_def.F  evnttcl_init.F  fill_trks.F  get_gt_rf.F  gtrig_time.F  hit_2_part.F  init_builder.F  lec_do_match.F  part_2_ev.F  photon_sampling_ec.F  read_rbanks.F  run_builder.F  sc_err.F  time_scecst.F  time_tracking.F  trig_time.F  trk_2_cc.F  trk_2_dc.F  trk_2_ec.F  trk_2_lec.F  trk_2_sc.F  trk_2_st.F  
+
+SRCS:=  
+
+fOBJS= $(patsubst %.f,$(OBJDIR)/%.o,$(fSRCS))
+FOBJS= $(patsubst %.F,$(OBJDIR)/%.o,$(FSRCS))
+OBJS= $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
+
+CCOBJS= $(patsubst %.cc,$(OBJDIR)/%.o,$(CCSRCS))
+
+CCCOBJS= $(patsubst %.C,$(OBJDIR)/%.o,$(CCCSRCS))
+
+all: lib  install
+
+LIBS= $(LOCAL_LIB)/libseb$(ADD_DEBUG).a
+lib: $(LIBS)
+
+$(LIBS): $(OBJS) $(FOBJS) $(fOBJS) $(CCOBJS) $(CCCOBJS)
+	$(VDIR) $(LOCAL_LIB)
+	ar rv $@ $?
+install: 
+	$(VDIR) $(LOCAL_BIN)
+	/usr/bin/install cchits.inc $(LOCAL_INC)
+	/usr/bin/install cc_inf.inc $(LOCAL_INC)
+	/usr/bin/install dc_inf.inc $(LOCAL_INC)
+	/usr/bin/install dtcl_var.inc $(LOCAL_INC)
+	/usr/bin/install ecgmt.inc $(LOCAL_INC)
+	/usr/bin/install echits.inc $(LOCAL_INC)
+	/usr/bin/install ec_inf.inc $(LOCAL_INC)
+	/usr/bin/install evnt_general.inc $(LOCAL_INC)
+	/usr/bin/install evnt_par.inc $(LOCAL_INC)
+	/usr/bin/install hbt_planes.inc $(LOCAL_INC)
+	/usr/bin/install lechits.inc $(LOCAL_INC)
+	/usr/bin/install lec_inf.inc $(LOCAL_INC)
+	/usr/bin/install particle_out.inc $(LOCAL_INC)
+	/usr/bin/install pdgid.inc $(LOCAL_INC)
+	/usr/bin/install photon_stuff.inc $(LOCAL_INC)
+	/usr/bin/install piddef.inc $(LOCAL_INC)
+	/usr/bin/install sc1hits.inc $(LOCAL_INC)
+	/usr/bin/install scgeom.inc $(LOCAL_INC)
+	/usr/bin/install schits.inc $(LOCAL_INC)
+	/usr/bin/install sc_inf.inc $(LOCAL_INC)
+	/usr/bin/install sthits.inc $(LOCAL_INC)
+	/usr/bin/install st_inf.inc $(LOCAL_INC)
+	/usr/bin/install tag_hits.inc $(LOCAL_INC)
+	/usr/bin/install tag_inf.inc $(LOCAL_INC)
+	/usr/bin/install tbtinf.inc $(LOCAL_INC)
+env:
+	@echo EXE $(EXE)
+	@echo LIBS $(LIBS)
+	@echo CC $(CC)
+	@echo FC $(FC)
+	@echo OS_NAME $(OS_NAME)
+	@echo INCLUDE $(INCLUDE)
+	@echo BOSPATH $(BOSPATH)
+	@echo FLIB $(FLIB)
+	@echo OBJS $(OBJS)
+	@echo CFLAGS $(CFLAGS)
+	@echo FFLAGS $(FFLAGS)
+	@echo CCLAGS $(CCFAGS)
+	@echo INCLUDE $(INCLUDE)
+	@echo LOCAL_LIB $(LOCAL_LIB)
+	@echo LOCAL_BIN $(LOCAL_BIN)
+	@echo LOCAL_INCLUDE $(LOCAL_INCLUDE)
+	@echo OBJDIR $(OBJDIR)
+	@echo MYSQL_ROOT_PATH $(MYSQL_ROOT_PATH)
+	@echo MYSQL_LIB_PATH $(MYSQL_LIB_PATH)
+	@echo MYSQL_INCLUDE_PATH $(MYSQL_INCLUDE_PATH)
+	@echo MAPLIB $(MAPLIB)
+	@echo STDLIBS $(STDLIBS)

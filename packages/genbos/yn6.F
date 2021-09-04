@@ -1,0 +1,720 @@
+      real FUNCTION AMAS(IK)
+C  DETERMINATION OF PARTICLE MASS
+      IMPLICIT REAL*8 (A-H,O-Z)
+c      REAL   AMAS
+      COMMON /DATA1/CMIX(6,2),PMASM(18),PMASB(18),PGAMM(18),
+     *PGAMB(18),MESO(9,2)
+      IF(IK.EQ.55)GO TO 3
+      IF(IK-36) 1,1,2
+ 1    AMAS=PMASM(IK)
+      RETURN
+ 2    AMAS=PMASB(IK-36)
+      RETURN
+ 3    AMAS=0.
+
+      RETURN
+      END
+
+
+      SUBROUTINE TC6
+      IMPLICIT REAL*8 (A-H,O-Z)
+        REAL*8 LARGE
+      COMMON /NORMS/ BITR,BITEL,BITC,ALPHA,BITRM,BITELM,BITCM
+      COMMON /CUTOFF/BA,BB,BINF,POW,ISL,ISLFOR
+        COMMON /CONST/ PI,LARGE
+      COMMON /COMCUT/ PARM,PARB,SWMAX
+C
+      DATA PI/3.14159/, LARGE /10000./
+      DATA PARM/1.4/,PARB/2.0/,SWMAX/0.35/
+C
+C   PARAMETERS FIXING THE SIZE OF ELASTIC AND RESONANT EXCITATIONS OF A
+C   PROTON ARE BITEL,BITR,BITC
+      DATA BITEL/45.075/
+      DATA BITR/44.404/
+      DATA BITC/61.50/
+      DATA BITELM/0.0045075/
+      DATA BITRM/0.11404/
+      DATA BITCM/61.50/
+C   ALPHA=TRAJECTORY INTERCEPT FOR HIGH MASS EXCITATIONS
+      DATA ALPHA/0.5/
+C   BA,BB FIX THE ELASTIC DIFFRACTIVE SLOPE AT INFINITE ENERGY
+      DATA BA/7.26/
+      DATA BB/7.26/
+C   BINF FIXES THE DIFFRACTIVE SLOPE FOR LARGE MASS CLUSTERS
+      DATA BINF/4.0/
+      DATA POW/2.0/
+C   ISL=1,2,3 FIXES THE TYPE OF MASS DEPENDENCE OF THE DIFFRACTIVE SLOPE
+       DATA ISL/2/
+C   ISLFOR=1 OR 2 DETERMINES THE PRESENCE OR ABSENCE OF A T(FORWARD)
+C   CUTOFF ON THE MASS SPECTRUM
+      DATA ISLFOR/1/
+C
+      RETURN
+      END
+
+
+      SUBROUTINE TC7
+      IMPLICIT REAL*8 (A-H,O-Z)
+      COMMON /COMABM/ ALFAM,BETAM
+      COMMON /COMABB/ ALFAB,BETAB
+      COMMON /DATA7/ CBR(35),KDP(35,3),IDC0(9,2)
+      COMMON /DATA2/PUD,PS1,SIGMA,CX2
+      COMMON /DATA1/CMIX(6,2),PMASM(18),PMASB(18),PGAMM(18),
+     *PGAMB(18),MESO(9,2)
+      COMMON /DATA4/QMAS(9)
+      COMMON /DATA6/POD810(3,6),PODSA(8,3),KBAR(18,2)
+      COMMON /DATA5/DQQ(3,3),IFLM(18,2),IFLB(18,3)
+      COMMON /COMCHA/ ICHAM(18),ICHAB(18)
+      COMMON /COMSTR/ ISTR(36)
+      COMMON /DATA3/ POPB(10)
+      DATA POPB/1.0,0.89,1.0,0.89,0.89,0.89,0.67,0.67,0.67,1.0/
+      DATA ISTR /2*0,1,-1,1,-1,5*0,1,-1,1,-1,5*0,3*-1,
+     *2*-2,-1,4*0,3*-1,2*-2,-3/
+      DATA IDC0 /0,1,2,4,6,8,10,11,13,
+     *                       16,17,19,20,22,25,28,31,33/
+      DATA KDP /1,2,5,3,6,4,3,5,4,6,3*1,3,5,1,37,38,37,
+     *2*38,37,44,41,39,44,40,41,44,39,40,42,2*43,42,
+     *           2*7,1,7,2,7,2,7,1,7,3*2,4,6,2,2*1,7,2,7,
+     *2,2*1,7,2,7,2,7,2,1,7,2,7,1,
+     *                       11*0,7,3*0,7,19*0/
+      DATA CBR/1.0,1.0,0.667,1.0,0.667,1.0,0.667,1.0,0.667,1.0,
+     *1.0,0.899,1.0,0.485,0.837,1.0,1.0,0.333,1.0,1.0,0.667,1.0,0.88,
+     *0.94,1.0,0.88,0.94,1.0,0.88,0.94,1.0,0.333,1.0,0.333,1.0/
+      DATA ICHAM/1,-1,1,-1,0,0,0,0,0,1,-1,1,-1,0,0,0,0,0/
+      DATA ICHAB/1,0,1,-1,0,-1,0,0,2,1,-1,0,1,-1,0,-1,0,-1/
+      DATA ALFAM/0.5/,BETAM/2.5/,ALFAB/0.5/,BETAB/3.0/
+      DATA PUD/0.43/,PS1/0.75/,SIGMA/0.51/,CX2/0.77/
+      DATA MESO/7,1,3,2,8,5,4,6,9,7,2,4,1,8,6,3,5,9/
+      DATA CMIX/2*0.5,1.,2*0.5,1.,2*0.25,0.5,2*0.,1./
+      DATA PMASM/2*0.14,4*0.492,0.14,0.549,0.958,2*0.770,2*0.896,
+     *          2*0.896,0.770,0.783,1.020/
+      DATA PMASB/2*0.94,3*1.189,2*1.315,1.116,4*1.232,
+     *3*1.385,2*1.530,1.672/
+      DATA PGAMM/9*0.,2*0.152,4*0.049,0.152,0.01,0.004/
+      DATA PGAMB/8*0.,4*0.122,0.035,0.042,0.035,0.0091,0.01,0./
+      DATA DQQ   /4.,6.,7.,
+     *                     6.,5.,8.,
+     *                     7.,8.,9./
+      DATA QMAS/9*0./
+      DATA IFLM  /1,2,1,3,2,3,3*1,1,2,1,3,2,3,2*1,3,
+     *    -2,-1,-3,-1,-3,-2,3*-1,-2,-1,-3,-1,-3,
+     *-2,2*-1,-3/
+      DATA IFLB   /3*1,2,1,2,4*1,2,2*1,2,1,2,1,3,
+     *                      1,2,1,2,2,2*3,2,2*1,2*2,1,2*2,3*3,
+     *                       2*2,6*3,1,3*2,6*3 /
+      DATA PODSA /0.25,1.0,0.25,0.,0.25,0.,1.0,0.75,
+     *                       1.0,0.25,0.,0.25,0.25,1.,0.,0.75,
+     *                       0.,0.,1.,1.,1.,0.25,0.25,1./
+      DATA KBAR    /0,37,39,38,0,40,37,38,41,39,44,43,44,
+     *40,42,43,42,0,
+     *             45,46,49,48,47,50,46,48,51,49,51,53,51,
+     *50,52,53,52,54/
+      DATA POD810 /1.,3*0.667,1.,0.667,   2*0.89,0.667,0.89,
+     *             0.667,0.89,0.667,2*0.89,2*0.667,1./
+
+      RETURN
+      END
+
+
+      SUBROUTINE PANU(P,IP,N)
+      IMPLICIT REAL*8 (A-H,O-Z)
+      REAL*8 P,M
+      DIMENSION P(9),IP(9)
+      N=0
+      IC=IP(1)
+      IL=IP(2)
+      IS=IP(3)
+      IB=IP(4)
+      M =P(9)
+      IR=IP(6)
+      IF(IC.EQ. 1.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.EQ.0)     N=1
+      IF(IC.EQ.-1.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.EQ.0)     N=2
+      IF(IC.EQ. 1.AND.IS.EQ. 1.AND.IB.EQ.0.AND.IR.EQ.0)     N=3
+      IF(IC.EQ.-1.AND.IS.EQ.-1.AND.IB.EQ.0.AND.IR.EQ.0)     N=4
+      IF(IC.EQ. 0.AND.IS.EQ. 1.AND.IB.EQ.0.AND.IR.EQ.0)     N=5
+      IF(IC.EQ. 0.AND.IS.EQ.-1.AND.IB.EQ.0.AND.IR.EQ.0)     N=6
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.EQ.0.AND.
+     *DABS(M-.140).LT.0.0001)                               N=7
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.EQ.0.AND.
+     *DABS(M-.549).LT.0.0001)                               N=8
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.EQ.0.AND.
+     *DABS(M-.958).LT.0.0001)                               N=9
+      IF(IC.EQ. 1.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.NE.0)     N=10
+      IF(IC.EQ.-1.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.NE.0)     N=11
+      IF(IC.EQ. 1.AND.IS.EQ. 1.AND.IB.EQ.0.AND.IR.NE.0)     N=12
+      IF(IC.EQ.-1.AND.IS.EQ.-1.AND.IB.EQ.0.AND.IR.NE.0)     N=13
+      IF(IC.EQ. 0.AND.IS.EQ. 1.AND.IB.EQ.0.AND.IR.NE.0)     N=14
+      IF(IC.EQ. 0.AND.IS.EQ.-1.AND.IB.EQ.0.AND.IR.NE.0)     N=15
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.NE.0.AND.
+     *DABS(M-.770).LT.0.0001)                               N=16
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.NE.0.AND.
+     *DABS(M-.783).LT.0.0001)                               N=17
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.NE.0.AND.
+     *DABS(M-1.020).LT.0.0001)                              N=18
+      IF(IC.EQ. 1.AND.IS.EQ. 0.AND.IB.EQ.1.AND.IR.EQ.0)     N=37
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.1.AND.IR.EQ.0)     N=38
+      IF(IC.EQ. 1.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.EQ.0)     N=39
+      IF(IC.EQ.-1.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.EQ.0)     N=40
+      IF(IC.EQ. 0.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.EQ.0)     N=41
+      IF(IC.EQ.-1.AND.IS.EQ.-2.AND.IB.EQ.1.AND.IR.EQ.0)     N=42
+      IF(IC.EQ. 0.AND.IS.EQ.-2.AND.IB.EQ.1.AND.IR.EQ.0)     N=43
+      IF(IC.EQ. 0.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.EQ.0)     N=44
+      IF(IC.EQ. 2.AND.IS.EQ. 0.AND.IB.EQ.1.AND.IR.NE.0)     N=45
+      IF(IC.EQ. 1.AND.IS.EQ. 0.AND.IB.EQ.1.AND.IR.NE.0)     N=46
+      IF(IC.EQ.-1.AND.IS.EQ. 0.AND.IB.EQ.1.AND.IR.NE.0)     N=47
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.1.AND.IR.NE.0)     N=48
+      IF(IC.EQ. 1.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.NE.0)     N=49
+      IF(IC.EQ.-1.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.NE.0)     N=50
+      IF(IC.EQ. 0.AND.IS.EQ.-1.AND.IB.EQ.1.AND.IR.NE.0)     N=51
+      IF(IC.EQ.-1.AND.IS.EQ.-2.AND.IB.EQ.1.AND.IR.NE.0)     N=52
+      IF(IC.EQ. 0.AND.IS.EQ.-2.AND.IB.EQ.1.AND.IR.NE.0)     N=53
+      IF(IC.EQ.-1.AND.IS.EQ.-3.AND.IB.EQ.1.AND.IR.EQ.0)     N=54
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IL.EQ.1)     N=55
+      IF(IC.EQ.-1.AND.IS.EQ. 0.AND.IB.EQ.-1.AND.IR.EQ.0)    N=56
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.-1.AND.IR.EQ.0)    N=57
+C  HE\TPA\\H\E HECTPAHH\E PE\OHAHC\ C \EPEMEHHO\ MACCO\===>RO0
+      IF(IC.EQ. 0.AND.IS.EQ. 0.AND.IB.EQ.0.AND.IR.NE.0.AND.N.EQ.0)
+     *                                                      N=16
+C
+      IF(N.EQ.0)   PRINT 1000,IP,M
+ 1000 FORMAT(2X,'PANU : IP=',9I5,2X,'M=',E13.6)
+      IF(N.EQ.0) STOP
+      RETURN
+      END
+
+
+      FUNCTION TAU(IK)
+      IMPLICIT REAL*8 (A-H,O-Z)
+      REAL *8 TAU
+      COMMON /DATA1/CMIX(6,2),PMASM(18),PMASB(18),PGAMM(18),
+     *PGAMB(18),MESO(9,2)
+      IF(IK.LE.36)   GO  TO  1
+      IF(PGAMB(IK-36).EQ.0.)  GO  TO  2
+      TAU=0.197/PGAMB(IK-36)
+      RETURN
+    1 IF(PGAMM(IK).EQ.0.)     GO  TO  2
+      TAU=0.197/PGAMM(IK)
+      RETURN
+    2 TAU=10.0E+9
+      RETURN
+      END
+
+
+      FUNCTION IQ(IK)
+C  PARTICLE CHARGE DETERMINATION
+      COMMON /COMCHA/ ICHAM(18),ICHAB(18)
+      IF(IK.GT.36) GO TO 1
+C   MESON CHARGE
+      IQ=ICHAM(IK)
+      RETURN
+C  BARION CHARGE
+ 1    IF(IK.EQ.55) GO TO 2
+      IQ=ICHAB(IK-36)
+      RETURN
+ 2    IQ=0
+      RETURN
+      END
+
+
+      SUBROUTINE LORLC(V,PX,E,L)
+C  LORENTZ TRANSFORMATION OF PX MOMENTUM COMPONENTS
+      IMPLICIT REAL*8 (A-H,O-Z)
+      REAL*8 V,PX,E
+      DIMENSION V(3),PX(3),VD(3)
+      DO 3 I=1,3
+  3   VD(I)=V(I)
+      VVD=VD(1)*VD(1)+VD(2)*VD(2)+VD(3)*VD(3)
+      GA=1.D0/DSQRT(DABS(1.D0-VVD))
+      BEP=SP(V,PX)
+      GABEP=GA*(GA*BEP/(1.+GA)-L*E)
+      DO 1 I=1,3
+ 1    PX(I)=PX(I)+GABEP*V(I)
+        RETURN
+      END
+
+
+      FUNCTION SP(A,B)
+C     SCALAR PRODUCT OF THREE-DIMENSIONAL VECTORS
+      IMPLICIT REAL*8 (A-H,O-Z)
+      REAL*8   SP,A,B
+      DIMENSION A(3),B(3)
+      SP=A(1)*B(1)+A(2)*B(2)+A(3)*B(3)
+      RETURN
+      END
+
+
+      FUNCTION IB(IK)
+C   CALCULATION OF PARTICLE BARION NUMBER
+      IF(IK.EQ.55) GO TO 1
+      IF(IK-36) 1,1,2
+ 1    IB=0
+      RETURN
+ 2    IB=1
+      RETURN
+      END
+
+
+      FUNCTION IS(K)
+C  DETERMINATION OF PARTICLE STRANGE
+      COMMON /COMSTR/ ISTR(36)
+      IF(K.GT.36) GO TO 1
+      IS=ISTR(K)
+      RETURN
+ 1    IF(K.EQ.55) GO TO 2
+      IS=ISTR(K-18)
+      RETURN
+ 2    IS=0
+      RETURN
+      END
+
+
+      SUBROUTINE DECAY(PDMAS,IKIN,IKNO,PXNO,PYNO,PZNO,ND)
+C   DECAY OF INSTABLE PARTICLES
+C    A LA LUND VERSION
+      IMPLICIT REAL*8 (A-H,O-Z)
+      REAL*8 PDMAS,PXNO,PYNO,PZNO
+      REAL*8 LARGE
+      REAL*4 RNDM
+      real amas
+      DIMENSION IKNO(3),PXNO(3),PYNO(3),PZNO(3)
+      DIMENSION IKN(5),PXN(5),PYN(5),PZN(5)
+      COMMON /DATA1/CMIX(6,2),PMASM(18),PMASB(18),PGAMM(18),
+     *PGAMB(18),MESO(9,2)
+      COMMON /DATA7/ CBR(35),KDP(35,3),IDC0(9,2)
+      COMMON /DATA5/DQQ(3,3),IFLM(18,2),IFLB(18,3)
+      COMMON /COMCHA/ ICHAM(18),ICHAB(18)
+        COMMON /CONST/ PI,LARGE
+      DIMENSION U(3),PX(3),VLAB(3),PATM(5)
+
+      real vran(1)
+
+C  DECAY CHANEL CHOOSE
+      IK=IKIN
+      IKN(1)=IK
+      PXN(1)=0.
+      PYN(1)=0.
+      PZN(1)=0.
+      IBP=IB(IK)
+      ISP=IS(IK)
+      IF(IK.LE.18)  ICP=ICHAM(IK)
+      IF(IK.GT.18)  ICP=ICHAB(IK-36)
+      IBSUM=0
+      ISSUM=0
+      ICSUM=0
+      PATM(1)=PDMAS
+      IF(IK.LE.36) IDC=IDC0(IK-9,IBP+1)
+      IF(IK.GT.36) IDC=IDC0(IK-44,IBP+1)
+      call ranmar(vran,1)
+      RNDM1=vran(1)
+ 100  IDC=IDC+1
+      IF(RNDM1.GT.CBR(IDC)) GO TO 100
+      ND=(59+KDP(IDC,3))/20
+      I11=2
+      IND=1+ND
+      DO 110 I1=I11,IND
+      IKN(I1)=KDP(IDC,I1-1)
+      PATM(I1)= AMAS(IKN(I1))
+ 110  CONTINUE
+C  IN THREE PARTICLE DECAY CHOOSE OF INVARIANT MASS OF PRODUCTS 2,3
+      IF(ND.EQ.2) GO TO 130
+      SA=(PATM(1)+PATM(2))**2
+      SB=(PATM(1)-PATM(2))**2
+      SC=(PATM(3)+PATM(4))**2
+      SD=(PATM(3)-PATM(4))**2
+      TDU=(SA-SD)*(SB-SC)/(4.*DSQRT(SB*SC))
+      IF(IK.EQ.17.OR.IK.EQ.18)TDU=DSQRT(SB*SC)*TDU**3
+ 120  call ranmar(vran,1)
+      SX=SC+(SB-SC)*vran(1)
+      TDF=DSQRT((SX-SA)*(SX-SB)*(SX-SC)*(SX-SD))/SX
+      IF(IK.EQ.17.OR.IK.EQ.18) TDF=SX*TDF**3
+      call ranmar(vran,1)
+      IF(vran(1)*TDU.GT.TDF) GO TO 120
+      PATM(5)=DSQRT(SX)
+C  TWO PARTICLE DECAY
+C  TWICE TO SIMULATE THREE PARTICLE DECAY
+ 130  ND1=ND-1
+      DO 160 IL=1,ND1
+      ID=(IL-1)*5-(IL-2)
+      I1=IL+1
+      I2=(ND-IL-1)*5-(ND-IL-2)*(IL+2)
+      PA=DSQRT((PATM(ID)**2-(PATM(I1)+PATM(I2))**2)*
+     *(PATM(ID)**2-(PATM(I1)-PATM(I2))**2))/(2.*PATM(ID))
+ 140  call ranmar(vran,1)
+      U(3)=2.0*vran(1)-1.
+      call ranmar(vran,1)
+      PHI=2.0*PI*vran(1)
+      ST=DSQRT(1.-U(3)**2)
+      U(1)=ST*DCOS(PHI)
+      U(2)=ST*DSIN(PHI)
+      IF(IL.EQ.2) TDA=1.-(U(1)*PXN(ID)+U(2)*PYN(ID)+U(3)*PZN(ID))**2/
+     *(PXN(ID)**2+PYN(ID)**2+PZN(ID)**2)
+      IF(IL.NE.2) GO TO 211
+      call ranmar(vran,1)
+      IF(vran(1).GT.TDA) GO TO 140
+ 211  PXN(I1)=PA*U(1)
+      PXN(I2)=-PA*U(1)
+      PYN(I1)=PA*U(2)
+      PYN(I2)=-PA*U(2)
+      PZN(I1)=PA*U(3)
+      PZN(I2)=-PA*U(3)
+ 160  CONTINUE
+C  DECAY PRODUCTS LORENTZ TRANSFORMED IN THREE PARTICLE DECAY
+      IF(ND.EQ.2) GO TO 181
+      IK=1
+      IL=ND-IK
+      ID=(IL-1)*5-(IL-2)
+      E=DSQRT(PATM(ID)**2+PXN(ID)**2+PYN(ID)**2+PZN(ID)**2)
+      VLAB(1)=PXN(ID)/E
+      VLAB(2)=PYN(ID)/E
+      VLAB(3)=PZN(ID)/E
+      INM=1+IL
+      INMD=1+ND
+      DO 190 I1=INM,INMD
+      PX(1)=PXN(I1)
+      PX(2)=PYN(I1)
+      PX(3)=PZN(I1)
+      EP=DSQRT( SP(PX,PX)+PATM(I1)**2)
+      CALL  LORLC(VLAB,PX,EP,-1)
+      PXN(I1)=PX(1)
+      PYN(I1)=PX(2)
+      PZN(I1)=PX(3)
+ 190  CONTINUE
+ 181  CONTINUE
+      DO 176 J=1,ND
+      K=J+1
+      IKNO(J)=IKN(K)
+      PXNO(J)=PXN(K)
+      PYNO(J)=PYN(K)
+      PZNO(J)=PZN(K)
+      IKK=IKN(K)
+      IBSUM=IBSUM+IB(IKK)
+      ISSUM=ISSUM+IS(IKK)
+      IF(IKK.LE.18)  ICSUM=ICSUM+ICHAM(IKK)
+      IF(IKK.GT.18)  ICSUM=ICSUM+ICHAB(IKK-36)
+ 176  CONTINUE
+      IF(ICSUM.NE.ICP.OR.ISSUM.NE.ISP.OR.IBSUM.NE.IBP)
+     *PRINT  300,IKIN,IKNO
+  300 FORMAT(1X,'ERROR IN DECAY : ',I3,'====>',3I5)
+      IF(ICSUM.NE.ICP.OR.ISSUM.NE.ISP.OR.IBSUM.NE.IBP)
+     *PRINT  301,ICP,ISP,IBP,ICSUM,ISSUM,IBSUM
+  301 FORMAT(1X,'C0,S0,B0=',3I5/1X,'CS,SS,BS=',3I5)
+      RETURN
+      END
+
+
+      SUBROUTINE GENEV
+C--      CALLED FROM - MAIN PROGRAM
+C --     PURPOSE - GENERATES EVENT (PCM AND WT ) USING AMASS AND TECM
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+C--       UTIL2 CONTAINS FURTHER NUMBERS USEFUL TO USER,
+C--            NAMELY EFF.MASSOF PARTICLES 1-I, M**2, AND DELTA SQ.
+C--       M**2 AND DELTA SQ. ARE INDEFINITE IF RAUBOLD-LYNCH METHOD IS U
+      COMMON/UTIL2/ EMM(18), EMMS(18), D2(18)
+     +/BEAM  / PRM       ,TARGM    ,PBM      ,ETA      ,GAM      ,DPBM
+     +/KGENEV/ KGENEV
+     +/KAJBYK/ KAJBYK    ,A(18)    ,UCUT(18) ,BCUT(18) ,NN
+     +/SHUFFL/ RNO(50)   ,NTNM4    ,NTM2     ,NTM1     ,QQCONS(50) ,TIR
+C--       PCM1 IS LINEAR EQUIV. OF PCM TO AVOID DOUBLE INDICES
+      DIMENSION EM(18),PD(18),EMS(18),SM(18),FFQ(18),PCM1(90)
+      EQUIVALENCE (NT,NP),(AMASS(1),EM(1)),(PCM1(1),PCM(1,1))
+C FFQ(N)=PI * (TWOPI)**(N-2) / (N-2)FACTORIAL
+      DATA  FFQ/0.,3.141592, 19.73921, 62.01255, 129.8788, 204.0131,
+     +                       256.3704, 268.4705, 240.9780, 189.2637,
+     +                       132.1308,  83.0202,  47.4210,  24.8295,
+     +                        12.0006,   5.3858,   2.2560,   0.8859/
+      DATA ETC, INIT, TWOPI / 0. , 0 , 6.2831853073 /
+      DDLAM(X,Y,Z) = SQRT((X-Y-Z)**2 - 4.*Z*Y)
+      INIT=0
+C      IF(TECM-ETC) 115,455,115
+C        INITIALIZATION
+  115 IF(INIT.GT.0) GOTO 300
+      INIT=1
+      NTM1=NT-1
+      NTM2=NT-2
+      NTP1=NT+1
+      NTNM4 = 3*NT - 4
+      EMM(1)=EM(1)
+      TM=0.0
+      TAM=PRM**2
+      TARGM2 = TARGM**2
+      PRMINV = 1./(2.*PRM)
+      DO 200 I=1,NT
+      EMS(I)=EM(I)**2
+      TM=TM+EM(I)
+ 200  SM(I)=TM
+C        CONSTANTS DEPENDING ON TECM
+  300 CONTINUE
+      TECMTM=TECM-TM
+      ETC=TECM
+      EMM(NT)=TECM
+      IF(KAJBYK.LE.0) GOTO 320
+      TECM2 = TECM**2
+      DDL11 = DDLAM(TECM2,TARGM2,TAM)
+      QX1 = DDL11*PRMINV
+      ETE = QX1/TECM
+      GEM=SQRT(1.+ETE**2)
+  320 CONTINUE
+      IF(KGENEV.GT.1) GOTO 400
+C        CONSTANT CROSS SECTION AS FUNCTION OF TECM
+      EMMAX=TECMTM+EM(1)
+      EMMIN=0.0
+      WTMAX=1.0
+      DO 350 I=2,NT
+      EMMIN=EMMIN+EM(I-1)
+      EMMAX=EMMAX+EM(I)
+  350 WTMAX=WTMAX*PDK(EMMAX,EMMIN,EM(I))
+      WTMAXQ=1.0/WTMAX
+      GOTO 455
+C--      FERMI ENERGY DEPENDENCE FOR CROSS SECTION
+  400 WTMAXQ=TECMTM**NTM2*FFQ(NT) / TECM
+C        CALCULATION OF WT BASED ON EFFECTIVE MASSES EMM
+C--       RANGNR FILLS RNO WITH 3*NT-4 RANDOM NUMBERS,
+  455 CALL RANGNR
+C--            OF WHICH THE FIRST NT-2 ARE ORDERED.
+      IF(NTM2) 900,509,460
+  460 CONTINUE
+      DO 508 J=2,NTM1
+  508 EMM(J)=RNO(J-1)*(TECMTM)+SM(J)
+  509 WT=WTMAXQ
+      IR=NTM2
+      DO 530 I=1,NTM1
+      PD(I)=PDK(EMM(I+1),EMM(I),EM(I+1))
+  530 WT=WT*PD(I)
+C--       KAJBYK IS FLAG (=1 IF KAJANTIE-BYCKLING METHOD TO BE USED)
+      IF(KAJBYK.GT.0) GOTO 800
+C--       COMPLETE SPECIFICATION OF EVENT (RAUBOLD-LYNCH METHOD)
+      PCM(1,1)=0.0
+      PCM(2,1)=PD(1)
+      PCM(3,1)=0.0
+      DO 570 I=2,NT
+      PCM(1,I)=0.0
+      PCM(2,I) = -PD(I-1)
+      PCM(3,I)=0.0
+      IR=IR+1
+      BANG=TWOPI*RNO(IR)
+      CB=COS(BANG)
+      SB=SIN(BANG)
+      IR=IR+1
+      C=2.0*RNO(IR)-1.0
+      S=SQRT(1.0-C*C)
+      IF(I.EQ.NT) GOTO 1567
+      ESYS=SQRT(PD(I)**2+EMM(I)**2)
+      BETA=PD(I)/ESYS
+      GAMA=ESYS/EMM(I)
+      DO 568 J=1,I
+      NDX = 5*J - 5
+      AA= PCM1(NDX+1)**2 + PCM1(NDX+2)**2 + PCM1(NDX+3)**2
+      PCM1(NDX+5) = SQRT(AA)
+      PCM1(NDX+4) = SQRT(AA+EMS(J))
+      CALL ROTES2(C,S,CB,SB,PCM,J)
+      PSAVE = GAMA*(PCM(2,J)+BETA*PCM(4,J))
+  568 PCM(2,J)=PSAVE
+      GOTO 570
+ 1567 DO 1568 J=1,I
+      AA=PCM(1,J)**2 + PCM(2,J)**2 + PCM(3,J)**2
+      PCM(5,J)=SQRT(AA)
+      PCM(4,J)=SQRT(AA+EMS(J))
+      CALL ROTES2(C,S,CB,SB,PCM,J)
+ 1568 CONTINUE
+  570 CONTINUE
+  900 CONTINUE
+      RETURN
+C--       COMPLETE SPECIFICATION OF EVENT (BYCKLING-KAJANTIE METHOD)
+  800 CONTINUE
+      DO 805 I=1,NP
+  805 EMMS(I) = EMM(I)**2
+      PAM = TARGM2
+      SINF1=0.
+      COSF1=1.
+      COST1=1.
+      SINT1=0.
+      QY=0.
+      QZ=0.
+      QX = QX1
+      DDL1 = DDL11
+C--       INDICES RUN BACKWARDS SINCE EVENT GENERATED IN ANTILAB
+      DO 840 I=1,NTM1
+      NTP1I = NTP1 - I
+      EMNP1 = EMMS(NTP1I)
+      EEEM = EMS(NTP1I)
+      NTMI = NT - I
+      EMN = EMMS(NTMI)
+      PPAM=PAM
+      X = (-EMNP1 +PPAM -TAM) * (EMNP1 +EMN -EEEM)
+      XX = DDL1 * PD(NTMI) * EMM(NTP1I) * 2.0
+      TT1 = EMN + TAM + (X-XX)/(2.0*EMNP1)
+      TT2 = EMN + TAM + (X+XX)/(2.0*EMNP1)
+      WP = TT2-TT1
+C--       BCUT AND UCUT HAVE OPPOSITE SIGN CONVENTION OF TT1,TT2
+      IF(BCUT(NTMI).NE.0.) TT2 = AMIN1(TT2,-BCUT(NTMI))
+      IF(UCUT(NTMI).NE.0.) TT1 = AMAX1(TT1,-UCUT(NTMI))
+      IF(TT2.LE.TT1) GOTO 455
+      ANN = A(NTMI)
+      IF(ANN.EQ.0.) GOTO 810
+      TT1 = EXP(ANN*TT1)
+      TT2 = EXP(ANN*TT2)
+      TT2 = TT2 - TT1
+      PAM = TT1 + RNO(IR+2)*TT2
+      WT = WT / (PAM*ANN)
+      WT = WT * TT2 / WP
+      PAM = ALOG(PAM)/ANN
+      GOTO 820
+  810 TT2 = TT2 - TT1
+      PAM = TT1 + RNO(IR+2)*TT2
+      WT = WT * TT2 / WP
+  820 D2(NTP1I-1) = -PAM
+      DDL2 = DDLAM(EMN,PAM,TAM)
+      COST = ((TAM+PPAM-EMNP1) *(TAM+PAM-EMN) - 2.*TAM*(PPAM+PAM-EEEM))
+     +      /(DDL1*DDL2)
+      COST22 = COST*COST
+      IF(COST22.GT.1.) GOTO 455
+      SINT = SQRT(1.-COST22)
+      BANG=TWOPI*RNO(IR+1)
+      SINDEP=SIN(BANG)
+      COSDEP=COS(BANG)
+      COST2=COST1*COST+SINT1*SINT*COSDEP
+      COST22 = COST2*COST2
+      IF(COST22.GT.1.) GOTO 455
+      SINT2= SQRT(1.-COST22)
+      VK=SINT1*SINT2
+      IF(VK.EQ.0.) GOTO 830
+      COSDEP=(COST-COST1*COST2)/VK
+      SINDEP=SINDEP*SINT/SINT2
+  830 COSF2=COSF1*COSDEP-SINF1*SINDEP
+      SINF2=SINF1*COSDEP+COSF1*SINDEP
+      QP = DDL2*PRMINV
+      QYY=QP*SINT2*SINF2
+      QZZ=QP*SINT2*COSF2
+      QXX=QP*COST2
+      NDX = 5*NTMI
+      PCM1(NDX+1) = QX-QXX
+      PCM1(NDX+2) = QY-QYY
+      PCM1(NDX+3) = QZ-QZZ
+      DDL1=DDL2
+      COST1=COST2
+      SINT1=SINT2
+      COSF1=COSF2
+      SINF1=SINF2
+      QX=QXX
+      QY=QYY
+      QZ=QZZ
+      IR=IR+2
+  840 CONTINUE
+      PCM(1,1)=QX
+      PCM(2,1)=QY
+      PCM(3,1)=QZ
+C--       TRANSFORM FROM ANTILAB TO CM SYSTEM
+      DO 855 J= 1, NP
+      NDX = 5*J - 5
+      PXI = PCM1(NDX+1)
+      AA = PXI**2 + PCM1(NDX+2)**2 + PCM1(NDX+3)**2
+      EI = SQRT(AA + EMS(J))
+      PCM1(NDX+1) = ETE*EI - GEM*PXI
+      PCM1(NDX+4) = GEM*EI - ETE*PXI
+  855 PCM1(NDX+5) = SQRT(PCM1(NDX+4)**2 - EMS(J))
+      RETURN
+      END
+
+
+      SUBROUTINE LABSYS
+C--  CALLED FROM -  USER  (OPTIONAL)
+C--  PURPOSE -  TRANSFORMS PCM FROM CMS TO LAB USING ETA AND GAM
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+     +/BEAM  / PRM       ,TARGM    ,PBM      ,ETA      ,GAM      ,DPBM
+      DO  100  I= 1, NP
+      EI = PCM(4,I)
+      PX = PCM(1,I)
+      PCM(1,I) = GAM*PX + ETA*EI
+      PCM(4,I) = ETA*PX + GAM*EI
+  100 PCM(5,I) = SQRT (PCM(1,I)**2 + PCM(2,I)**2 + PCM(3,I)**2)
+      RETURN
+      END
+
+
+      FUNCTION PDK(A,B,C)
+C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+C--  CALLED FROM -  GENEV
+C     PDK = SQRT(A*A+(B*B-C*C)**2/(A*A) - 2.0*(B*B+C*C))/2.0
+      A2 = A*A
+      B2 = B*B
+      C2 = C*C
+      PDK = 0.5*SQRT(A2 + (B2-C2)**2/A2 - 2.0*(B2+C2))
+      RETURN
+      END
+
+
+      SUBROUTINE RANGNR
+C--       CALLED FROM GENEV.  ASSEMBLES RANDOM NUMBERS FOR ONE EVENT.
+C--       IT INCLUDES THE QUASIRANDOM GENERATOR QQRNDM,
+C--       AND USES A PSEUDORANDOM GENERATOR (RNDM) FOR SHUFFLING
+      COMMON
+     +/SHUFFL/ RNO(50)   ,NTNM4    ,NTM2     ,NTM1     ,QQCONS(50) ,TIR
+      CALL NRAN(RNO,NTNM4)
+C--       ORDER THE FIRST NTM2 RANDOM NUMBERS
+C--         TWO IS A SPECIAL CASE (FASTER)
+      IF(NTM2 - 2) 200,160,110
+  110 KM1 = NTM2 - 1
+      DO 150 I= 1, KM1
+      IQUIT = 0
+      NI = NTM2 - I
+      DO 140 J= 1, NI
+      IF(RNO(J) - RNO(J+1)) 140,140,120
+  120 SAV = RNO(J)
+      RNO(J) = RNO(J+1)
+      RNO(J+1) = SAV
+      IQUIT = 1
+  140 CONTINUE
+      IF(IQUIT) 200,200,150
+  150 CONTINUE
+      GOTO 200
+  160 IF(RNO(1).LE.RNO(2)) GOTO 200
+      SAV = RNO(1)
+      RNO(1) = RNO(2)
+      RNO(2) = SAV
+  200 CONTINUE
+      RETURN
+      END
+
+
+      SUBROUTINE ROTES2(C,S,C2,S2,PR,I)
+C--  CALLED FROM - GENEV
+C         THIS SUBROUTINE NOW DOES TWO ROTATIONS (XY AND XZ)
+      DIMENSION PR(50)
+      K1 = 5*I - 4
+      K2 = K1 + 1
+      SA = PR(K1)
+      SB = PR(K2)
+      A      = SA*C - SB*S
+      PR(K2) = SA*S + SB*C
+      K2 = K2 + 1
+      B = PR(K2)
+      PR(K1) = A*C2 - B*S2
+      PR(K2) = A*S2 + B*C2
+      RETURN
+      END
+
+
+      FUNCTION XPLSDX(X,DX)
+      DATA CON/ 0.915 /
+      R=0.0
+      DO  100  I= 1, 10
+C     R = R + RANF(-1)
+      R = R + RNDM(DUMMY)
+  100 CONTINUE
+      R2 = (R-5.0) / CON
+      XPLSDX = X + DX*R2
+      RETURN
+      END
+
+
+      SUBROUTINE NRAN(VEC,N)
+      DIMENSION VEC(50)
+
+      real vran(1)
+
+      DO 1 I=1,N
+      call ranmar(vran,1)
+      VEC(I)=vran(1)
+   1  CONTINUE
+      RETURN
+      END

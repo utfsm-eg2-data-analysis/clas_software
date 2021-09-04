@@ -1,0 +1,23 @@
+<html>
+<title> Tcl SCAT Interface </title>
+<h1 ALIGN=CENTER> Tcl SCAT Interface </h1>
+<p>This document explains the two commands used to allow Tcl to communicate with RECSIS.  These commands were compiled into a special wish shell swish.
+
+<h3 ALIGN=CENTER> ScatSendMsgNr </h3>
+<p>
+<body>     ScatSendMsgNr is used to pass a value on to RECSIS.
+<p>
+Example:  ScatSendMsgNr {set ldsiplay -1}<br>
+<p>
+     This command sets the RECSIS variable ldisplay to -1.  The script within the bracesis a tcl command since that is what RECSIS expects. </body>
+<p>
+<br>
+<h3 ALIGN=CENTER> ScatSendMsg </h3>
+<p>
+<body>     ScatSendMsg is used to return a value from RECSIS.
+<p>
+Example:  if {[ScatSendMsg {set leof}] != 0} {...}<br>
+<p>
+     Here ScatSendMsg is part of an if statement.  The square braces tell tcl to evaluatethe enclosed script.  The ScatSendMsg command then passes {set leof} to RECSIS which executes the command.  ScatSendMsg is a procedure that returns the result of the Tcl command.  So ScatSendMsg returns the value of the RECSIS variable leof.
+</body>
+</html>

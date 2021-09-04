@@ -1,0 +1,214 @@
+      SUBROUTINE BOOK_SEB_NT(NTID)
+c
+c_begin_doc
+c  RCS ID string
+c  $Id: book_seb_nt.F,v 1.24 2006/01/04 20:34:27 marki Exp $
+c
+c  Documentation for subroutine BOOK_SEB_NT
+c
+c  Purpose: Booking Ntuple #10 for reconstructed particles.
+c  --------
+c
+c  Input Parameters:  Non
+c  ----------------
+c
+c  Output Parameters: Non
+c  -----------------
+c
+c  Other routines:
+c  ---------------
+c
+c  Notes:
+c  ------
+c
+c  Author:    S,. Stepanyan    Created:  Fri Mar  7 09:43:38 EST 1997
+c  -------
+c
+c  Major revisions:
+c  ----------------
+c     
+c
+c_end_doc
+c
+      IMPLICIT NONE
+      SAVE
+c
+c_begin_inc
+c  include files :
+c  ---------------------
+c BOS common block  uncomment the next line for BOS include file
+#include "seb_nt.inc"
+#include "clasmdl.inc"
+#include "evnt_par.inc"
+c_end_inc
+c
+c_begin_var
+c  input/output variables:
+c  -----------------------
+c
+c  Local pre-defined variables:
+c  ---------------------------
+c  RCS information: 
+      CHARACTER*132  CFILE, CREVIS, CSTATE, CDATE, CAUTHO, CRCSID
+      PARAMETER (CFILE = '$RCSfile: book_seb_nt.F,v $')
+      PARAMETER (CREVIS = '$Revision: 1.24 $')
+      PARAMETER (CSTATE = '$State: Exp $')
+      PARAMETER (CDATE = '$Date: 2006/01/04 20:34:27 $')
+      PARAMETER (CAUTHO = '$Author: marki $')
+      DATA CRCSID/ 
+     +'$Id: book_seb_nt.F,v 1.24 2006/01/04 20:34:27 marki Exp $'/
+c  Module information:
+      CHARACTER*(*)  CRNAME, CRAUTH
+      CHARACTER*100  CRMESS
+      PARAMETER (CRNAME='BOOK_SEB_NT')
+      PARAMETER (CRAUTH='Stepan Stepanyan')
+c
+c  Local User defined variables:
+c  -----------------------------
+      INTEGER NWRITE
+      INTEGER NTID,btype/0/
+c_end_var
+c
+c  executable code for routine BOOK_PART_NT:
+c----6----------------------------------------------------------------72
+c
+      IF (NWRITE .LT. 1) THEN
+        NWRITE = NWRITE + 1
+        CRMESS='Booking a N-tuple for reconstructed particles.'
+        CALL RECMES(CRNAME,'I',CRMESS)
+      ENDIF
+c Ntuple blok for event header
+      call hbname(NTID,'hevt',npart,'npart[0,20]:I')
+      call hbname(NTID,'hevt',evstat,'evstat[-1,1]:I')
+      call hbname(NTID,'hevt',evntid,'evntid[0,80000000]:I')
+      call hbname(NTID,'hevt',evntype,'evntype[-10,1000]:I')
+      call hbname(NTID,'hevt',evntclas,'evntclas[-12000,12000]:I')
+      call hbname(NTID,'hevt',q_l,'q_l:R')
+      call hbname(NTID,'hevt',t_l,'t_l:R')
+      call hbname(NTID,'hevt',tr_time,'tr_time:R')
+      call hbname(NTID,'hevt',rf_time,'rf_time:R')
+      call hbname(NTID,'hevt',l2bit,'l2bit[0,4095]:I')
+      call hbname(NTID,'hevt',l3bit,'l3bit[0,4095]:I')
+      call hbname(NTID,'hevt',hlsc,'hlsc[0,2000000]:I')
+      call hbname(NTID,'hevt',intt,'intt:I')
+c      call hbname(NTID,'hevt',l1bit,'l1bit[0,4095]:I')
+c      call hbname(NTID,'hevt',run_num,'run_num[0,60000]:I')
+c      call hbname(NTID,'hevt',helicity,'helicity[0,1]:I')
+c      call hbname(NTID,'hevt',sync,'sync[0,1]:I')
+c      call hbname(NTID,'hevt',mps,'mps[0,2]:I')
+c      call hbname(NTID,'hevt',qrt,'qrt[0,1]:I')
+c      call hbname(NTID,'hevt',hel_flag,'hel_flag:R')
+c      call hbname(NTID,'hevt',hel_ofl,'hel_ofl[-1,2]:I')
+c      call hbname(NTID,'hevt',hel_onl,'hel_onl[-1,2]:I')
+c      call hbname(NTID,'hevt',hel_r26,'hel_r26[-1,2]:I')
+c      call hbname(NTID,'hevt',clock_u,'clock_u[-1,350000]:I')
+c      call hbname(NTID,'hevt',fcup_u,'fcup_u[-1,65534]:I')
+c      call hbname(NTID,'hevt',slm_u,'slm_u[-1,65534]:I')
+c      call hbname(NTID,'hevt',clock_g,'clock_g[-1,350000]:I')
+c      call hbname(NTID,'hevt',fcup_g,'fcup_g[-1,65534]:I')
+c      call hbname(NTID,'hevt',slm_g,'slm_g[-1,65534]:I')
+c      call hbname(NTID,'hevt',raster_x,'raster_x[0,8191]:I')
+c      call hbname(NTID,'hevt',raster_y,'raster_y[0,8191]:I')
+
+
+c Ntuple blok for particles in the event.
+      call hbname(NTID,'evnt',gpart,
+     +'gpart[0,20]:I,'//
+     +'id(gpart)[-8191,8191]:I,stat(gpart)[-10,10]:I,'//
+     +'dc(gpart)[0,20]:I,cc(gpart)[0,20]:I,'//
+     +'sc(gpart)[0,20]:I,ec(gpart)[0,20]:I,'//
+     +'lec(gpart)[0,20]:I,st(gpart)[0,20]:I,'//
+     +'p(gpart):R:16:[0,6.5535],m(gpart):R:16:[-8.,8.383],'//
+     +'q(gpart)[-1,1]:I,b(gpart):R:12:[0,2.047],'//
+     +'cx(gpart):R:16:[-1,1],cy(gpart):R:16:[-1,1],'//
+     +'cz(gpart):R:16:[-1,1],vx(gpart):R:12:[-100.,104.7],'//
+     +'vy(gpart):R:12:[-100.,104.7],vz(gpart):R') 
+c Ntuple blok for DC tracks involved in the event (particles).
+      call hbname(NTID,'dcpb',dc_part,
+     +'dc_part[0,20]:I,dc_sect(dc_part)[0,6]:I,'//
+     +'dc_trk(dc_part)[0,31]:I,dc_stat(dc_part)[-1,30]:I,'//
+     +'tb_st(dc_part)[0,3000000]:I,dc_xsc(dc_part):R:16:[0.,819.1],'//
+     +'dc_ysc(dc_part):R:16:[-400,419.1],'//
+     +'dc_zsc(dc_part):R:16:[-820.,819.1],'//
+     +'dc_cxsc(dc_part):R:16:[-1,1],dc_cysc(dc_part):R:16:[-1,1],'//
+     +'dc_czsc(dc_part):R:16:[-1,1],'//
+     +'dc_vx(dc_part):R:16:[-800.,838.3],'//
+     +'dc_vy(dc_part):R:16:[-800.,838.3],'//
+     +'dc_vz(dc_part):R:16:[-800.,838.3],'//
+     +'dc_vr(dc_part):R:12:[-10.,409.5],'//
+     +'tl1_cx(dc_part):R:16:[-1,1],tl1_cy(dc_part):R:16:[-1,1],'//
+     +'tl1_cz(dc_part):R:16:[-1,1],'//
+     +'tl1_x(dc_part):R:16:[-300,355.35],'//
+     +'tl1_y(dc_part):R:16:[-300,355.35],'//
+     +'tl1_z(dc_part):R:16:[-300,355.35],'//
+     +'tl1_r(dc_part):R:16:[-50.,605.35],'//
+     +'dc_c2(dc_part):R:12:[0,102.3]')
+c    +'dc_ccth(dc_part):R:16:[0,81.91],dc_ccph(dc_part):R:16:[-320.,335.35]')
+c Ntuple blok for EC hits involved in the event (particles).
+      call hbname(NTID,'ecpb',ec_part,
+     +'ec_part[0,20]:I,ec_stat(ec_part)[0,65535]:I,'//
+     +'ec_sect(ec_part)[0,6]:I,ec_whol(ec_part)[0,7]:I,'//
+     +'ec_inst(ec_part)[0,130000]:I,ec_oust(ec_part)[0,130000]:I,'//
+     +'etot(ec_part):R:16:[-0.5,6.0535],'//
+     +'ec_ei(ec_part):R:16:[0.,6.5535],'//
+     +'ec_eo(ec_part):R:16:[0.,6.5535],'//
+     +'ec_t(ec_part):R:16:[-50.,605.35],'//
+     +'ec_r(ec_part):R:16:[0.,1638.3],'//
+     +'ech_x(ec_part):R:16:[-800.,838.3],'//
+     +'ech_y(ec_part):R:16:[-800.,838.3],'//
+     +'ech_z(ec_part):R:16:[0.,1638.3],'// 
+     +'ec_c2(ec_part):R:16:[0.,40.95],'//
+     +'ec_m2(ec_part):R:16:[0., 6553.5],'//
+     +'ec_m3(ec_part):R:16:[0.,65535.],'//
+     +'ec_m4(ec_part):R:12:[0.,32767500.]') 
+c Ntuple blok for SC hits involved in the event (particles).
+      call hbname(NTID,'SCpb',sc_part,
+     +'sc_part[0,20]:I,sc_sect(sc_part)[0,6]:I,'//
+     +'sc_hit(sc_part)[0,63]:I,sc_pd(sc_part)[0,63]:I,'//
+     +'sc_stat(sc_part)[0,63]:I,'//
+     +'edep(sc_part):R:16:[0.,163.83],'//
+     +'sc_t(sc_part):R:16:[-300,355.35],'//
+     +'sc_r(sc_part):R:16:[0.,1638.3],sc_c2(sc_part):R:12:[0.,204.7]') 
+c Ntuple blok for CC hits involved in the event (particles).
+      call hbname(NTID,'CCpb',cc_part,
+     +'cc_part[0,20]:I,cc_sect(cc_part)[0,6]:I,'//
+     +'cc_hit(cc_part)[0,63]:I,cc_segm(cc_part)[0,4095]:I,'//
+     +'nphe(cc_part)[0,4095]:I,cc_t(cc_part):R:16:[-300,355.35],'//
+     +'cc_r(cc_part):R:16:[0.,1638.3],'//
+     +'cc_c2(cc_part):R:12:[-1.,3.047]') 
+c Ntuple blok for LAC hits involved in the event (particles).
+      call hbname(NTID,'LECpb',lac_part,
+     +'lac_part[0,20]:I,lec_sect(lac_part):I,lec_hit(lac_part):I,'//
+     +'lec_stat(lac_part):I,lec_etot(lac_part):R,lec_ein(lac_part):R,'//
+     +'lec_t(lac_part):R,lec_r(lac_part):R,lec_x(lac_part):R,'//
+     +'lec_y(lac_part):R,lec_z(lac_part):R,lec_c2(lac_part):R') 
+c For photon runs
+      if(photon_trig_type.ne.-1) then
+         btype = photon_trig_type       ! for gsim data
+      else    
+         call make_runc_bank(nccrun)    ! need to make this in order to use get_beam_type
+      endif
+      call get_beam_type(btype)
+      if(btype.ne.0) then
+c Ntuple blok for ST hits involved in the event (particles).  
+c      if(btype.eq.1) then
+         call hbname(NTID,'STpb',st_part,
+     +   'st_part[0,20]:I,st_sector(st_part):I,st_ihit(st_part):I,'//
+     +   'st_trkno(st_part):I,st_time(st_part):R,'//
+     +   'st_rtrk(st_part):R,st_status(st_part):I') 
+c      endif
+c Ntuple blok for TAG hits involved in the event (particles).     
+       call hbname(NTID,'TAGR',taghit,
+     +'taghit[0,20]:I,E_gamma(taghit):R,T_gamma_noRF(taghit):R,'//
+     +'T_gamma(taghit):R,tagstat(taghit):I,Tid(taghit):I,Eid(taghit):I')
+
+       call hbname(NTID,'TGPB',taggoodhit,
+     +'taggoodhit[0,20]:I,tag_ptr(taggoodhit):I,'//
+     +'vertex_time(taggoodhit):R,tag_energy(taggoodhit):R,'//
+     +'dt_st_tag(taggoodhit):R')  
+      endif     
+
+      RETURN
+      END
+c
+c-----------------------------------------------------------------------

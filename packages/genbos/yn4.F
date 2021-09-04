@@ -1,0 +1,1351 @@
+
+      SUBROUTINE ELEX(V,U,TIN1,PARTIN,IPATIN,PARTNE,IPATNE,
+     *MV,NP,L,MS,MQ,KSI,ME)
+C     BLOCK OF CALCULATION OF PARTICLE CHARACTERISTICS IN ELASTIC AND
+C     CHARGE EXCHANGE SCATTERING.
+      COMMON/MEMORY/PMEMO,IMEMO
+     */BLNUCL/ ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+     */SIG0/SIGOM
+     */GAM_CAS/GAM_CAS
+      COMMON/CEBAF/FERMI(66),RADIUS(66),   Z_COORD(66),
+     #             PART(26), CH_COUNT(26), T_COUNT(26)
+      DIMENSION PMEMO(9,100),IMEMO(9,100),V(3),PARTIN(9),IPATIN(9),
+     *PARTNE(9),IPATNE(5),PIST(3),PNST(3)
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),
+     *TFP(10),TFN(10),AF(10)
+      LOGICAL GAM_CAS
+
+      real vran(1)
+
+C
+      ITQ=IPATIN(4)
+      NUM=IPATIN(8)
+      IF(NUM.EQ.8.OR.NUM.EQ.17)  GO TO 30
+      IF(IPATIN(2))10,11,10
+   10 CMI = 0.14
+       CMN = 0.94
+      GO TO 12
+   11 CMI = PARTIN(9)
+       CMN = 0.94
+      GO TO 12
+   12 DIV=SIGMAT(L,MS,MQ,ME,KSI,
+     *1,TIN1,ITQ)+SIGMAT(L,MS,MQ,ME,KSI,2,TIN1,ITQ)
+      IF(DIV.GT.1.E-10) THEN
+        BETAEX=SIGMAT(L,MS,MQ,ME,KSI,2,TIN1,ITQ)/DIV
+      ELSE
+        BETAEX=0.0
+      ENDIF
+
+      call ranmar(vran,1)
+      IF(ITQ) 23,25,25
+C                       ANTINUCLEON
+ 23   IF(vran(1)-BETAEX) 24,29,29
+  24      CTSTI=COSE(TIN1)
+      IF(IPATIN(1))27,28,27
+C                      EXC APP-ANN
+  27  IE=0
+       NE=0
+       GO TO 18
+C   EXC ANN-APP
+  28  NE=1
+       IE=-1
+       GO TO 18
+C   ELASTIC
+  29      CTSTI=COSA(TIN1)
+      IE=IPATIN(1)
+       NE=IPATNE(1)
+      GO TO 18
+C                        NUCLEON
+  25  call ranmar(vran,1)
+      IF (vran(1)-BETAEX) 17,13,13
+  13      CTSTI = COSEL(L,MQ,KSI,TIN1,PARTIN(9))
+      IE=IPATIN(1)
+       NE = IPATNE(1)
+       GO TO 18
+C
+  17  CTSTI = COSEX (L,TIN1,PARTIN(9))
+      IF (IPATIN(1)) 15,16,15
+C
+   15 IE = 0
+       NE = ME
+       GO TO 18
+   16 NE = 1-IPATNE(1)
+       IE = ME-NE
+       GO TO 18
+   18 call ranmar(vran,1)
+      FISTI = 6.283185*vran(1)
+      CALL ABEL(PARTIN,V,U,PIST,PNST,CTSTI,FISTI,CMI,CMN)
+      IF(MV-97) 19,19,20
+   20 NP = 0
+      PRINT 21
+   21 FORMAT (45X,29H MEMORY IS EXCEEDED IN CASCAD)
+      RETURN
+   19 CONTINUE
+      PMEMO(1,MV+3) = PIST(1)
+      PMEMO(2,MV+3) = PIST(2)
+      PMEMO(3,MV+3) = PIST(3)
+      PMEMO(9,MV+3)=CMI
+      IMEMO(1,MV+3)=IE
+      IMEMO(2,MV+3)=0
+      IMEMO(3,MV+3) = IPATIN(3)
+      IMEMO(4,MV+3) = IPATIN(4)
+      CALL PNUM(CMI,IE,0,IPATIN(3),IPATIN(4),NUM)
+      IMEMO(8,MV+3) = NUM
+C
+      PMEMO(1,MV+1) = PNST(1)
+      PMEMO(2,MV+1) = PNST(2)
+      PMEMO(3,MV+1) = PNST(3)
+      PMEMO(9,MV+1)=CMN
+      IMEMO(1,MV+1)=NE
+      IMEMO(2,MV+1)=0
+      IMEMO(3,MV+1) = 0
+      IMEMO(4,MV+1) = 1
+      CALL PNUM(CMN,NE,0,0,1,NUM)
+      IMEMO(8,MV+1) = NUM
+      NP = 2
+
+      IF(IPATIN(2).EQ.1) THEN
+                           !  MAKE HISTOGRAMS RIGHT NOW FOR GAMMA ...
+        CALL HIST_2D(FLOAT(NP),PART,T_COUNT,26,1.0)
+        ! NORMALIZED TO UNITY 
+        IF(GAM_CAS) THEN
+          HIST_WEIGHT=SIGOM/ANUCL   !TOPOLOGICAL IN MB ...
+        ELSE
+          HIST_WEIGHT=1.0     !TOPOLOGICAL TO UNITY IF ANY ...
+        ENDIF
+        CALL HIST_2D(ABS(FLOAT(IE))+ABS(FLOAT(NE)),PART,CH_COUNT,
+     #                     26,HIST_WEIGHT)
+      ENDIF  
+!
+      RETURN
+C
+ 30   CALL ELEXREZ(V,U,TIN1,PARTIN,IPATIN,PARTNE,IPATNE,MV,NP,
+     *L,MS,MQ,KSI,ME)
+      RETURN
+      END
+
+
+      SUBROUTINE ELEXREZ(V,U,TIN1,PARTIN,IPATIN,PARTNE,IPATNE,
+     *MV,NP,L,MS,MQ,KSI,ME)
+C     BLOCK OF CALCULATION OF PARTICLE CHARACTERISTICS IN ELASTIC AND
+C     CHARGE EXCHANGE SCATTERING FOR MEZON REZONANSES.
+      COMMON/MEMORY/PMEMO,IMEMO
+      DIMENSION PMEMO(9,100),IMEMO(9,100),V(3),PARTIN(9),IPATIN(9),
+     *PARTNE(9),IPATNE(5),PIST(3),PNST(3)
+
+      real vran(1)
+
+      ITQ=IPATIN(4)
+      CMI = PARTIN(9)
+      CMN = 0.94
+      BETAEX=SIGMAT(L,MS,MQ,ME,KSI,2,TIN1,ITQ)/(SIGMAT(L,MS,MQ,ME,KSI,
+     *1,TIN1,ITQ)+SIGMAT(L,MS,MQ,ME,KSI,2,TIN1,ITQ))
+
+      call ranmar(vran,1)
+      IF(vran(1)-BETAEX) 10,20,20
+C         REZ + N ==> PI + N
+  10  call ranmar(vran,1)
+      CTSTI=-1.+2.*vran(1)
+      CMI=0.14
+      call ranmar(vran,1)
+      IF (vran(1)-0.333) 11,12,12
+  11  IE=IPATIN(1)
+       NE = IPATNE(1)
+      GO TO 301
+C
+  12  IF (ME.EQ.1)GO TO 13
+C
+      IE = ME-1
+       NE = ME+1
+      GO TO 301
+   13 NE = ME-1
+       IE = ME
+      GO TO 301
+  301 IF(IE) 302,303,304
+  302 NUM=2
+      GO TO 30
+  303 NUM=7
+      GO TO 30
+  304 NUM=1
+      GO TO 30
+C         REZ + N ==> REZ + N
+ 20   call ranmar(vran,1)
+      CTSTI=-1.+2.*vran(1)
+       IE=IPATIN(1)
+        NE = IPATNE(1)
+         NUM = IPATIN(8)
+      GO TO 30
+ 30   call ranmar(vran,1)
+      FISTI = 6.283185*vran(1)
+      CALL ABEL(PARTIN,V,U,PIST,PNST,CTSTI,FISTI,CMI,CMN)
+      IF(MV-97)31,31,32
+   32 NP = 0
+      PRINT 21
+   21 FORMAT (45X,29H MEMORY IS EXCEEDED IN CASCAD)
+      RETURN
+   31 CONTINUE
+      PMEMO(1,MV+3) = PIST(1)
+      PMEMO(2,MV+3) = PIST(2)
+      PMEMO(3,MV+3) = PIST(3)
+      PMEMO(9,MV+3)=CMI
+      IMEMO(1,MV+3)=IE
+      IMEMO(2,MV+3)=0
+      IMEMO(3,MV+3) = IPATIN(3)
+      IMEMO(4,MV+3) = IPATIN(4)
+      IMEMO(8,MV+3) = NUM
+C
+      PMEMO(1,MV+1) = PNST(1)
+      PMEMO(2,MV+1) = PNST(2)
+      PMEMO(3,MV+1) = PNST(3)
+      PMEMO(9,MV+1)=CMN
+      IMEMO(1,MV+1)=NE
+      IMEMO(2,MV+1)=0
+      IMEMO(3,MV+1) = 0
+      IMEMO(4,MV+1) = 1
+      CALL PNUM(CMN,NE,0,0,1,NUM)
+      IMEMO(8,MV+1) = NUM
+      NP = 2
+      RETURN
+      END
+
+      
+      SUBROUTINE ANGPI (PARTIN,IPATIN,IPATNE,TIN1,U,V,MV,NP)
+      COMMON/MEMORY/PMEMO(9,100),IMEMO(9,100)
+     */ANTIN/NITN
+      COMMON /POM/ IPATI,PARTI
+      DIMENSION PARTIN(9),IPATIN(9),IPATNE(5),V(3)
+      DIMENSION PAKV(3), PIN (3),PL(3),PLST(3),PIST(3),PNST(3),PAKST(3)
+
+      real vran(1)
+
+C
+C          ANNIHILATION INTO PIONS (T > 0.)
+C
+      KH=0
+      TT=0.135
+      A9=1./(9.*TT**2)
+      PY=(1.+SQRT(1.+0.0784*A9))/(2.*A9)
+      R=SQRT(PY)
+      ABCM= R**3*EXP(-SQRT(R**2+0.0196)/TT)
+C
+      NP=0
+      NITN=1
+      IPATI=IPATIN(1)
+      PARTI=PARTIN(8)
+  731 CALL ORFRIT(NP,U,IPATNE(1),MV)
+      IF(NP-2) 1979,1980,1981
+ 1979 NP=0
+      GO TO 731
+ 1980 CONTINUE
+      call ranmar(vran,1)
+      FIST=6.283185*vran(1)
+      call ranmar(vran,1)
+      CTST=1.-2.*vran(1)
+      CALL ABEL(PARTIN,V,U,PIST,PNST,CTST,FIST,0.140,0.140)
+      PMEMO(1,MV+3)=PIST(1)
+      PMEMO(2,MV+3)=PIST(2)
+      PMEMO(3,MV+3)=PIST(3)
+      PMEMO(9,MV+3)=0.140
+      IMEMO(2,MV+3)=0
+      IMEMO(3,MV+3)=0
+      IMEMO(4,MV+3)=0
+      CALL PNUM(0.14,IMEMO(1,MV+3),0,0,0,NUM)
+      IMEMO(8,MV+3) = NUM
+C
+      PMEMO(1,MV+1)=PNST(1)
+      PMEMO(2,MV+1)=PNST(2)
+      PMEMO(3,MV+1)=PNST(3)
+      PMEMO(9,MV+1)=0.140
+      IMEMO(2,MV+1)=0
+      IMEMO(3,MV+1)=0
+      IMEMO(4,MV+1)=0
+      CALL PNUM(0.14,IMEMO(1,MV+1),0,0,0,NUM)
+      IMEMO(8,MV+1) = NUM
+      NP=2
+      RETURN
+ 1981 CONTINUE
+C------------------ NP GE 3
+  110 U1=U
+      EMAX=(U1**2+0.0196-(FLOAT(NP-1)*0.1 40)**2)/(2.0*U1)
+      PMAX=SQRT(EMAX**2-0 .0196)
+      I=1
+      PAKV(1)=0.
+      PAKV(2)=0.
+      PAKV(3)=0.
+      ABC=(7.142857-1./SQRT(PMAX**2+0.0196))
+  111 LT=MV+I
+ 443  call ranmar(vran,1)
+      TEMP1=SQRT((0.0196/((1.-0.140*vran(1)*ABC)**2))-0.0196)
+      ET=SQRT(TEMP1**2+0.0196)
+      TEMP3=TEMP1**3*EXP(-ET/TT)/ABCM
+      call ranmar(vran,1)
+      TEMP2=vran(1)
+      IF(TEMP2-TEMP3) 445,443,443
+  445 PMEMO(4,LT)=TEMP1
+      TEMP2= ET-0.140
+      U1=U1-SQRT(PMEMO(4,LT)**2+0.0196)
+      IF(U1-0.140)101,101,322
+  101 KH=KH+1
+      IF(KH-1000) 110,110,388
+  388 PRINT 387,KH,NP
+  387 FORMAT(2X,2HHL,2I8)
+      GOTO 731
+  322 IF(I-NP+1) 112,113,113
+ 112  call ranmar(vran,1)
+      TEMP2=vran(1)
+      CT=1.-2.0*TEMP2
+      ST=SQRT(1-CT**2)
+      call ranmar(vran,1)
+      FI1=6.283185*vran(1)
+      FI=FI1
+      PMEMO(1,LT)=PMEMO(4,LT)*ST*COS(FI)
+      PMEMO(2,LT)=PMEMO(4,LT)*ST*SIN(FI)
+      PMEMO(3,LT)=PMEMO(4,LT)*CT
+      PAKV(1)=PAKV(1)+PMEMO(1,LT)
+      PAKV(2)=PAKV(2)+PMEMO(2,LT)
+      PAKV(3)=PAKV(3)+PMEMO(3,LT)
+      PS=SQRT(PAKV(1)**2+PAKV(2)**2+PAKV(3)**2)
+      I=I+1
+      GO TO 111
+  113 PMEMO(4,MV+NP)=SQRT(U1**2-0.0196)
+      R1=PMEMO(4,MV+NP)-PMEMO(4,LT)-PS
+      IF(R1) 114,101,101
+  114 R2=PMEMO(4,MV+NP)-SQRT((PMEMO(4,LT)-PS)**2)
+      IF(R2) 101,101,115
+  115 V2=V(1)**2+V(2)**2+V(3)**2
+      TEMP4=SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      SPV=TEMP4*PARTIN(4)*PARTIN(7)*V(1)+TEMP4*PARTIN(5)*V(3)+
+     1TEMP4*PARTIN(4)*PARTIN(6)*V(2)
+      TEMP5=SPV*(1./SQRT(1.-V2)-1.)/V2
+      TEMP6=(PARTIN(8)+PARTIN(9))/SQRT(1.-V2)
+      PIN(1)=TEMP4*PARTIN(4)*PARTIN(7)+V(1)*TEMP5-V(1)*TEMP6
+      PIN(2)=TEMP4*PARTIN(4)*PARTIN(6)+V(2)*TEMP5-V(2)*TEMP6
+      PIN(3)=TEMP4*PARTIN(5)+V(3)*TEMP5-V(3)*TEMP6
+      I=1
+  171 LT=MV+I
+      PL(1)=PMEMO(1,LT)
+      PL(2)=PMEMO(2,LT)
+      PL(3)=PMEMO(3,LT)
+      CALL ROTOR(PIN,V,PL,PLST)
+      PMEMO(1,LT)=PLST(1)
+      PMEMO(2,LT)=PLST(2)
+      PMEMO(3,LT)=PLST(3)
+      I=I+1
+      IF(I-NP+1) 171,172,172
+ 172  CALL ROTOR(PIN,V,PAKV,PAKST)
+      CTM1=(PMEMO(4,MV+NP-1)**2-PMEMO(4,MV+NP)**2-PS**2)/
+     1 (2.0*PS*PMEMO(4,MV+NP))
+      CTM2=(PMEMO(4,MV+NP)**2-PMEMO(4,MV+NP-1)**2-PS**2)/
+     1(2.0*PS*PMEMO(4,MV+NP-1))
+      call ranmar(vran,1)
+      FM1=6.283185*vran(1)
+      FM2=3.14159+FM1
+      STM1=SQRT(1.-CTM1**2)
+      STM2=SQRT(1.-CTM2**2)
+      CFM1=COS(FM1)
+      SFM1=SIN(FM1)
+      CFM2=COS(FM2)
+      SFM2=SIN(FM2)
+      PL(1)=PMEMO(4,MV+NP-1)*STM2*CFM2
+      PL(2)=PMEMO(4,MV+NP-1)*STM2*SFM2
+      PL(3)=PMEMO(4,MV+NP-1)*CTM2
+      CALL ROTOR(PAKST,V,PL,PLST)
+      PMEMO(1,MV+NP-1)=PLST(1)
+      PMEMO(2,MV+NP-1)=PLST(2)
+      PMEMO(3,MV+NP-1)=PLST(3)
+      PL(1)=PMEMO(4,MV+NP)*STM1*CFM1
+      PL(2)=PMEMO(4,MV+NP)*STM1*SFM1
+      PL(3)=PMEMO(4,MV+NP)*CTM1
+      CALL ROTOR(PAKST,V,PL,PLST)
+      PMEMO(1,MV+NP)=PLST(1)
+      PMEMO(2,MV+NP)=PLST(2)
+      PMEMO(3,MV+NP)=PLST(3)
+      NP1=MV+1
+      NP2=MV+NP
+      DO 522 I=NP1,NP2
+      PMEMO(9,I)=0.140
+      IMEMO(2,I)=0
+      IMEMO(3,I)=0
+      IMEMO(4,I)=0
+      CALL PNUM(0.14,IMEMO(1,I),0,0,0,NUM)
+      IMEMO(8,I) = NUM
+ 522  CONTINUE
+      RETURN
+      END
+
+
+      SUBROUTINE ANGREZ (PARTIN,IPATIN,IPATNE,TIN1,MV,ND)
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+     */BEAM/PRM,TARGM,PBM,ETA,GAM,DPBM
+     */KAJBYK/KAJBYK,A(18),UCUT(18),BCUT(18),NN
+     */MEMORY/PME(9,100),IME(9,100)
+     */ANTIN/NITN
+     */BLNUCL/ ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+      COMMON/BRPP/BREZPP,IREZPP,NLINPP
+      COMMON/BRNP/BREZNP,IREZNP,NLINNP
+      DIMENSION BREZPP(1000),BREZNP(1000),P(3)
+      DIMENSION IREZPP(6,1000),IREZNP(6,1000)
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),
+     *TFP(10),TFN(10),AF(10)
+      DIMENSION PARTIN(9),IPATIN(9),IPATNE(5),IRENUM(17)
+      DATA IRENUM/2,1,3,4,5,6,7,8,9,11,10,12,13,14,15,16,17/
+
+      real vran(1)
+
+C
+C          ANNIHILATION WITH RESONANSES (T > 0.)
+C
+      PIN1=SQRT((TIN1+1.88)*TIN1)
+      NN=0
+      IR=0
+C
+  10  NP=0
+      ICH=IPATIN(1)+IPATNE(1)
+      IF(ICH) 11,12,11
+C   ANTIN - P  OR ANTIP - N
+C
+ 11   call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 2 I=1,NLINNP
+      IF(TEMP1-BREZNP(I)) 3,2,2
+ 2    CONTINUE
+ 3    IK=I
+C
+      AMM=0.
+      NP=0
+      NN=NN+1
+      DO  IJ=1,6
+         NUM=IREZNP(IJ,IK)
+         IF(NUM.EQ.0) GO TO 5
+         IF(ICH.EQ.1) NUM=IRENUM(NUM)
+         NP=IJ
+         MTEMP=MV+IJ
+         IME(8,MTEMP)=NUM
+         AMASS(IJ)=AMREZ(NUM)
+         AMM=AMM+AMASS(IJ)
+      END DO
+  5   CONTINUE
+      IF(NN.GT.100) THEN
+          PRINT 333
+ 333      FORMAT(4X,' STOPPED IN ANGREZ, NN TOO LARGE...')   
+          STOP
+      ENDIF
+      GO TO 13
+C
+C   ANTIP - P AND ANTIN - N
+C
+ 12   call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 22 I=1,NLINPP
+      IF(TEMP1-BREZPP(I)) 23,22,22
+ 22   CONTINUE
+ 23   IK=I
+C
+      AMM=0.
+      NP=0
+      NN=NN+1
+      DO  IJ=1,6
+         NUM=IREZPP(IJ,IK)
+         IF(NUM.EQ.0) GO TO 25
+         NP=IJ
+         MTEMP=MV+IJ
+         IME(8,MTEMP)=NUM
+         AMASS(IJ)=AMREZ(NUM)
+         AMM=AMM+AMASS(IJ)
+      END DO
+ 25   CONTINUE
+      IF(NN.GT.100) THEN
+          PRINT 333
+          STOP
+      ENDIF
+      GO TO 13
+C
+  13  DO 7 IW=1,150
+      WEIGHT(IW)=1.0
+  7   CONTINUE
+      PRM=PARTIN(9)
+      TARGM=0.94
+      PBM=SQRT(TIN1*(TIN1+2.*PRM))
+      E=SQRT(PBM**2+PRM**2)
+      ECMS=TARGM**2+PRM**2+2.0*TARGM*E
+      TECM=SQRT(ECMS)
+      IF(AMM.GT.TECM) GO TO 10
+      ETA=PBM/TECM
+      GAM=(E+TARGM)/TECM
+      KAJBYK =0
+      CALL GENEV
+C
+      ND=NP
+      DO 9 IJ=1,NP
+      MTEMP=MV+IJ
+      NUM=IME(8,MTEMP)
+C
+      PME(1,MTEMP)=PCM(1,IJ)
+      PME(2,MTEMP)=PCM(2,IJ)
+      PME(3,MTEMP)=PCM(3,IJ)
+      PME(9,MTEMP)=AMASS(IJ)
+      IME(1,MTEMP)=IQ(NUM)
+      IME(2,MTEMP)=0
+      IME(3,MTEMP)=IS(NUM)
+      IME(4,MTEMP)=0
+      IF(NUM.EQ.17) NOM=NOM+1
+      IF(NUM.EQ.17) IME(9,MTEMP)=NOM
+      IF(NUM.EQ. 8) NET=NET+1
+      IF(NUM.EQ. 8) IME(9,MTEMP)=NET
+   9  CONTINUE
+      IF(NP.NE.2) GO TO 30
+      DO 31 I=1,9
+      PME(I,MTEMP+1)=PME(I,MTEMP)
+      IME(I,MTEMP+1)=IME(I,MTEMP)
+  31  CONTINUE
+  30  NITN=1
+      RETURN
+      END
+
+
+      SUBROUTINE ANABS (PARTIN,IPATIN,NNABS,MV,T3)
+      COMMON/MEMORY/PMEMO(9,100),IMEMO(9,100)
+      COMMON /POM/ IPATI,PARTI
+      DIMENSION PLST(3),PAKST(3),PIST(3),PNST(3)
+      DIMENSION V(3),PL(3),PAKV(3),PIN(3)
+      COMMON/BLNUCL/ ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+     1/BEGIN/CM0,T0,T1,T2,ME0,MQ0,MS0,L0
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),
+     *TFP(10),TFN(10),AF(10),PARTIN(9),IPATIN(9),PARTNE(9),IPATNE(5)
+
+      real vran(1)
+
+C
+C            ANNIHILATION INTO PIONS (AT REST)
+C
+      TT=0.135
+      A9= 1./(9.*TT**2)
+      PY=(1.+SQRT(1.+0.0784*A9))/(2.*A9)
+      R=SQRT(PY)
+      ABCM= R**3*EXP(-SQRT(R**2+0.0196)/TT)
+      KH=0
+      MV=0
+      NP=0
+      IPATI=IPATIN(1)
+      PARTI=PARTIN(8)
+      CALL PARTN(PARTIN,IPATIN,PARTNE,IPATNE)
+      KPR=IPATNE(5)
+      T3=TFP(KPR)-PARTNE(8)
+      CALL TINVU(PARTIN(8),PARTIN(9),PARTNE(8),PARTNE(9),
+     1 PARTIN(4),PARTIN(5),PARTIN(6),PARTIN(7),
+     2 PARTNE(4),PARTNE(5),PARTNE(6),PARTNE(7),V,U,TIN1)
+  731 CALL ORFT0(NP,U,IPATNE(1))
+      IF(NP-2) 1979,1980,1981
+ 1979 NP=0
+      GO TO 731
+ 1980 CONTINUE
+C     NP = 2
+      call ranmar(vran,1)
+      FIST=6.283185*vran(1)
+      call ranmar(vran,1)
+      CTST=1.-2.*vran(1)
+      CALL ABEL(PARTIN,V,U,PIST,PNST,CTST,FIST,0.140,0.140)
+      PMEMO(1,MV+2)=PIST(1)
+      PMEMO(2,MV+2)=PIST(2)
+      PMEMO(3,MV+2)=PIST(3)
+C
+      PMEMO(1,MV+1)=PNST(1)
+      PMEMO(2,MV+1)=PNST(2)
+      PMEMO(3,MV+1)=PNST(3)
+      NP=2
+      GO TO 122
+ 1981 CONTINUE
+C NP GE 3 ******
+   10 U1=U
+            EMAX=(U1**2+0.0196-(FLOAT(NP-1)*0.1 40)**2)/(2.0*U1)
+      PMAX=SQRT(EMAX**2-0 .0196)
+      I=1
+      PAKV(1)=0.
+      PAKV(2)=0.
+      PAKV(3)=0.
+      ABC=(7.142857-1./SQRT(PMAX**2+0.0196))
+   11 LT=MV+I
+ 443  call ranmar(vran,1)
+      TEMP1=SQRT((0.0196/((1.-0.140*vran(1)*ABC)**2))-0.0196)
+      ET=SQRT(TEMP1**2+0.0196)
+      TEMP3=TEMP1**3*EXP(-ET/TT)/ABCM
+      call ranmar(vran,1)
+      TEMP2=vran(1)
+      IF(TEMP2-TEMP3) 445,443,443
+  445 PMEMO(4,LT)=TEMP1
+      TEMP2= ET-0.140
+      U1=U1-SQRT(PMEMO(4,LT)**2+0.0196)
+      IF(U1-0.140)101,101,322
+  101 KH=KH+1
+      IF(KH-1000) 10,10,388
+  388 PRINT 387,KH,NP
+  387 FORMAT(2X,2HHL,2I8)
+      NNABS=0
+      RETURN
+  322 IF(I-NP+1) 12,13,13
+ 12   call ranmar(vran,1)
+      TEMP2=vran(1)
+      CT=1.-2.0*TEMP2
+      ST=SQRT(1-CT**2)
+      call ranmar(vran,1)
+      FI1=6.283185*vran(1)
+      FI=FI1
+      PMEMO(1,LT)=PMEMO(4,LT)*ST*COS(FI)
+      PMEMO(2,LT)=PMEMO(4,LT)*ST*SIN(FI)
+      PMEMO(3,LT)=PMEMO(4,LT)*CT
+      PAKV(1)=PAKV(1)+PMEMO(1,LT)
+      PAKV(2)=PAKV(2)+PMEMO(2,LT)
+      PAKV(3)=PAKV(3)+PMEMO(3,LT)
+      PS=SQRT(PAKV(1)**2+PAKV(2)**2+PAKV(3)**2)
+      I=I+1
+      GO TO 11
+   13 PMEMO(4,MV+NP)=SQRT(U1**2-0.0196)
+      R1=PMEMO(4,MV+NP)-PMEMO(4,LT)-PS
+      IF(R1) 14,101,101
+   14 R2=PMEMO(4,MV+NP)-SQRT((PMEMO(4,LT)-PS)**2)
+      IF(R2) 101,101,15
+   15 V2=V(1)**2+V(2)**2+V(3)**2
+      TEMP4=SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      SPV=TEMP4*PARTIN(4)*PARTIN(7)*V(1)+TEMP4*PARTIN(5)*V(3)+
+     1TEMP4*PARTIN(4)*PARTIN(6)*V(2)
+      TEMP5=SPV*(1./SQRT(1.-V2)-1.)/V2
+      TEMP6=(PARTIN(8)+PARTIN(9))/SQRT(1.-V2)
+      PIN(1)=TEMP4*PARTIN(4)*PARTIN(7)+V(1)*TEMP5-V(1)*TEMP6
+      PIN(2)=TEMP4*PARTIN(4)*PARTIN(6)+V(2)*TEMP5-V(2)*TEMP6
+      PIN(3)=TEMP4*PARTIN(5)+V(3)*TEMP5-V(3)*TEMP6
+      I=1
+  171 LT=MV+I
+      PL(1)=PMEMO(1,LT)
+      PL(2)=PMEMO(2,LT)
+      PL(3)=PMEMO(3,LT)
+      CALL ROTOR(PIN,V,PL,PLST)
+      PMEMO(1,LT)=PLST(1)
+      PMEMO(2,LT)=PLST(2)
+      PMEMO(3,LT)=PLST(3)
+      I=I+1
+      IF(I-NP+1) 171,172,172
+ 172  CALL ROTOR(PIN,V,PAKV,PAKST)
+      CTM1=(PMEMO(4,MV+NP-1)**2-PMEMO(4,MV+NP)**2-PS**2)/
+     1 (2.0*PS*PMEMO(4,MV+NP))
+      CTM2=(PMEMO(4,MV+NP)**2-PMEMO(4,MV+NP-1)**2-PS**2)/
+     1(2.0*PS*PMEMO(4,MV+NP-1))
+      call ranmar(vran,1)
+      FM1=6.283185*vran(1)
+      FM2=3.14159+FM1
+      STM1=SQRT(1.-CTM1**2)
+      STM2=SQRT(1.-CTM2**2)
+      CFM1=COS(FM1)
+      SFM1=SIN(FM1)
+      CFM2=COS(FM2)
+      SFM2=SIN(FM2)
+      PL(1)=PMEMO(4,MV+NP-1)*STM2*CFM2
+      PL(2)=PMEMO(4,MV+NP-1)*STM2*SFM2
+      PL(3)=PMEMO(4,MV+NP-1)*CTM2
+      CALL ROTOR(PAKST,V,PL,PLST)
+      PMEMO(1,MV+NP-1)=PLST(1)
+      PMEMO(2,MV+NP-1)=PLST(2)
+      PMEMO(3,MV+NP-1)=PLST(3)
+      PL(1)=PMEMO(4,MV+NP)*STM1*CFM1
+      PL(2)=PMEMO(4,MV+NP)*STM1*SFM1
+      PL(3)=PMEMO(4,MV+NP)*CTM1
+      CALL ROTOR(PAKST,V,PL,PLST)
+      PMEMO(1,MV+NP)=PLST(1)
+      PMEMO(2,MV+NP)=PLST(2)
+      PMEMO(3,MV+NP)=PLST(3)
+  122 L=1
+  422 MTEMP=MV+L
+      PMEMO(9,MTEMP)=0.140
+      PL(1)=PMEMO(1,MTEMP)
+      PL(2)=PMEMO(2,MTEMP)
+      PL(3)=PMEMO(3,MTEMP)
+      CALL CINEMA(PL,V,
+     *         PAKV,CT,ST,CFI,SFI,TL,PMEMO(9,MTEMP))
+      PMEMO(1,MTEMP)=PARTIN(1)
+      PMEMO(2,MTEMP)=PARTIN(2)
+      PMEMO(3,MTEMP)=PARTIN(3)
+      PMEMO(4,MTEMP)=ST
+      PMEMO(5,MTEMP)=CT
+      PMEMO(6,MTEMP)=SFI
+      PMEMO(7,MTEMP)=CFI
+      PMEMO(8,MTEMP)=TL
+      IMEMO(2,MTEMP)=0
+      IMEMO(3,MTEMP)=0
+      IMEMO(4,MTEMP)=0
+      IMEMO(5,MTEMP)=IPATNE(5)
+      IMEMO(6,MTEMP)=0
+      IMEMO(7,MTEMP)=1
+      CALL PNUM(0.14,IMEMO(1,MTEMP),0,0,0,NUM)
+      IMEMO(8,MTEMP) = NUM
+      IF(L-NP)477,188,188
+  477 L=L+1
+      GO TO 422
+  188 MV=MV+NP
+      NNABS=1
+      RETURN
+      END
+
+
+      SUBROUTINE ANABS1 (PARTIN,IPATIN,NNABS,MV,T3)
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+     */BEAM/PRM,TARGM,PBM,ETA,GAM,DPBM
+     */KAJBYK/KAJBYK,A(18),UCUT(18),BCUT(18),NN
+     */MEMORY/PME(9,100),IME(9,100)
+     */BLNUCL/ ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+      COMMON/BRPP/BREZPP,IREZPP,NLINPP
+      COMMON/BRNP/BREZNP,IREZNP,NLINNP
+      COMMON/HTREZ/HTOMG(50),HTRO(50),HTETA(50)
+      DIMENSION BREZPP(1000),BREZNP(1000),P(3)
+      DIMENSION IREZPP(6,1000),IREZNP(6,1000)
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),
+     *TFP(10),TFN(10),AF(10)
+      DIMENSION V(3),PL(3),PAKV(3),PIN(3),
+     *PARTIN(9),IPATIN(9),PARTNE(9),IPATNE(5)
+
+      real vran(1)
+
+C
+C            ANNIHILATION INTO RESONANSES WITH B=0 (AT REST)
+C
+C
+  10  MV=0
+      NP=0
+      CALL PARTN(PARTIN,IPATIN,PARTNE,IPATNE)
+      KPR=IPATNE(5)
+      T3=TFP(KPR)-PARTNE(8)
+      CALL TINVU(PARTIN(8),PARTIN(9),PARTNE(8),PARTNE(9),
+     1 PARTIN(4),PARTIN(5),PARTIN(6),PARTIN(7),
+     2 PARTNE(4),PARTNE(5),PARTNE(6),PARTNE(7),V,U,TIN1)
+C
+       ICH=IPATIN(1)+IPATNE(1)
+       IF(ICH) 11,12,14
+ 14   PRINT *,' ANNIHILATION OF STOPPED ANTINEUTRON'  
+      RETURN
+C             ANTIP - N
+C
+ 11   call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 2 I=1,NLINNP
+      IF(TEMP1-BREZNP(I)) 3,2,2
+ 2    CONTINUE
+ 3    IK=I
+C
+      NN=0
+  600 AMM=0.
+      NP=0
+      NN=NN+1
+      DO  IJ=1,6
+         NUM=IREZNP(IJ,IK)
+         IF(NUM.EQ.0) GO TO 5
+         NP=IJ
+         MTEMP=MV+IJ
+         IME(8,MTEMP)=NUM
+         AMASS(IJ)=AMREZ(NUM)
+         AMM=AMM+AMASS(IJ)
+      END DO
+  5   CONTINUE
+      IF(NN.GT.100) GO TO 10
+      IF(AMM.GT.1.88) GO TO 600
+      GO TO 13
+C
+C   ANTIP - P
+C
+ 12   call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 22 I=1,NLINPP
+      IF(TEMP1-BREZPP(I)) 23,22,22
+ 22   CONTINUE
+ 23   IK=I
+C
+      NN=0
+  601 AMM=0.
+      NP=0
+      NN=NN+1
+      DO IJ=1,6
+         NUM=IREZPP(IJ,IK)
+         IF(NUM.EQ.0) GO TO 25
+         NP=IJ
+         MTEMP=MV+IJ
+         IME(8,MTEMP)=NUM
+         AMASS(IJ)=AMREZ(NUM)
+         AMM=AMM+AMASS(IJ)
+      END DO
+ 25   CONTINUE
+      IF(NN.GT.100) GO TO 10
+      IF(AMM.GT.1.88) GO TO 601
+      GO TO 13
+C
+  13  DO 7 IW=1,150
+      WEIGHT(IW)=1.0
+  7   CONTINUE
+      PRM=PARTIN(9)
+      TARGM=PARTNE(9)
+      PBM=SQRT(TIN1*(TIN1+2.*PRM))
+      E=SQRT(PBM**2+PRM**2)
+      ECMS=TARGM**2+PRM**2+2.0*TARGM*E
+      TECM=SQRT(ECMS)
+      ETA=PBM/TECM
+      GAM=(E+TARGM)/TECM
+      KAJBYK =0
+      CALL GENEV
+C
+      DO 9 IJ=1,NP
+      MTEMP=MV+IJ
+      NUM=IME(8,MTEMP)
+C
+      AM=AMASS(IJ)
+      PL(1)=PCM(1,IJ)
+      PL(2)=PCM(2,IJ)
+      PL(3)=PCM(3,IJ)
+      CALL CINEMA(PL,V,
+     *         PAKV,CT,ST,CFI,SFI,TL,AM)
+C
+      PME(1,MTEMP)=PARTIN(1)
+      PME(2,MTEMP)=PARTIN(2)
+      PME(3,MTEMP)=PARTIN(3)
+      PME(4,MTEMP)=ST
+      PME(5,MTEMP)=CT
+      PME(6,MTEMP)=SFI
+      PME(7,MTEMP)=CFI
+      PME(8,MTEMP)=TL
+      PME(9,MTEMP)=AM
+      IME(1,MTEMP)=IQ(NUM)
+      IME(2,MTEMP)=0
+      IME(3,MTEMP)=IS(NUM)
+      IME(4,MTEMP)=0
+      IME(5,MTEMP)=IPATNE(5)
+      IME(6,MTEMP)=ISTAB(NUM,TL,AM,PAKV)
+      IME(7,MTEMP)=1
+      IF(NUM.EQ. 8) NET=NET+1
+      IF(NUM.EQ.17) NOM=NOM+1
+   9  CONTINUE
+      MV=MV+NP
+      NNABS=1
+      RETURN
+      END
+
+
+      SUBROUTINE CH2ABS (ICH,A,Z)
+C     BLOCK OF CHARGE DETERMINING IN ABSORPTION OF ANTIPROTON.
+
+      real vran(1)
+
+      call ranmar(vran,1)
+      RN = vran(1)
+C                          N-P
+      TEMP1=(2.*Z*(A-Z))/(A*(A-1.))
+      IF (RN-TEMP1) 20,20,17
+C                          P-P
+   17 TEMP2 = (Z*(Z-1.))/(A*(A-1.))+TEMP1
+      IF (RN-TEMP2) 21,21,22
+   20 ICH = 0
+      RETURN
+   21 ICH = 1
+      RETURN
+   22 ICH = -1
+      RETURN
+         END
+
+
+      SUBROUTINE ANABS2 (PARTIN,IPATIN,NNABS,MV,T3)
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+     */BEAM/PRM,TARGM,PBM,ETA,GAM,DPBM
+     */KAJBYK/KAJBYK,A(18),UCUT(18),BCUT(18),NN
+     */MEMORY/PME(9,100),IME(9,100) 
+C     */COMCHA/ICHAM(18),ICHAB(18) 
+C     */COMSTR/ISTR(36) 
+     */COMNP/APNN,APNP,APPP
+     */ETOT/ETOT
+     */BLNUCL/ ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+      COMMON/BR2PP/BREPP,IREPP,NL2PP
+      COMMON/BR2NP/BRENP,IRENP,NL2NP
+      COMMON/BR2NN/BRENN,IRENN,NL2NN
+      DIMENSION BREPP(1000),BRENP(1000),BRENN(1000),P(3)
+      DIMENSION IREPP(6,1000),IRENP(6,1000),IRENN(6,1000)
+      DIMENSION PLST(3),PAKST(3),PIST(3),PNST(3)
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),
+     *TFP(10),TFN(10),AF(10)
+      DIMENSION V(3),PL(3),PAKV(3),PAF(3),PAR1(9),IPA1(5),
+     *PARTIN(9),IPATIN(9),PARTNE(9),IPATNE(5),IRENUM(17)
+
+      real vran(1)
+
+C      DATA IRENUM/2,1,3,4,5,6,7,8,9,11,10,12,13,14,15,16,17/
+       NC=0
+
+C
+  10  MV=0   
+      NP=0
+      NC=NC+1
+      CALL PARTN(PARTIN,IPATIN,PARTNE,IPATNE)
+      KPR=IPATNE(5)
+      T3=TFP(KPR)-PARTNE(8)      
+      CALL PARTN (PARTIN,IPATIN,PAR1,IPA1)
+      KPR=IPA1(5)
+      T3=T3+TFP(KPR)-PAR1(8)      
+C
+      PN1 = SQRT(PAR1(8)*(PAR1(8)+1.88))
+      PN = SQRT(PARTNE(8)*(PARTNE(8)+1.88))
+      PIN= SQRT(PARTIN(8)*(PARTIN(8)+2.*PARTIN(9)))
+      PAF(1)=PN*PARTNE(4)*PARTNE(7)+PN1*PAR1(4)*PAR1(7)
+      PAF(2)=PN*PARTNE(4)*PARTNE(6)+PN1*PAR1(4)*PAR1(6)
+      PAF(3) = PN*PARTNE(5)+PN1*PAR1(5)
+      PAFM2 = (PAF(1)**2+PAF(2)**2+PAF(3)**2)
+      EN =(PARTNE(8)+PAR1(8)+1.88)
+      PAFM=SQRT(PAFM2)
+      E2=EN*EN
+      TMS=SQRT(E2-PAFM2)	
+      TAF=EN-TMS
+      CTN1=PAF(3)/PAFM
+      TEMP1 = 1.-CTN1**2
+      IF (TEMP1)11,11,12
+   11 CTN1=1.
+      STN1=0.
+      SFN1=0.
+      CFN1=1.
+      GO TO 15
+   12 STN1=SQRT(TEMP1)
+      TEMP2=PAFM*STN1
+      SFN1=PAF(2)/TEMP2
+      CFN1=PAF(1)/TEMP2
+      GO TO 15
+  15  CALL TINVU (PARTIN(8),PARTIN(9),TAF,TMS,PARTIN(4),PARTIN(5),
+     *PARTIN(6),PARTIN(7),STN1,CTN1,SFN1,CFN1,V,U,TIN1)
+      CALL CH2ABS (ICH,ANUCL,ZNUCL)
+C
+       ETOT=PARTIN(8)+PARTIN(9)+EN
+       PX=0.
+       PY=0.
+       PZ=0.
+        ST=PARTIN(4)
+        CT=PARTIN(5)
+        SFI=PARTIN(6)
+        CFI=PARTIN(7)
+       PX=PX+PIN*ST*CFI+PAFM*STN1*CFN1
+       PY=PY+PIN*ST*SFI+PAFM*STN1*SFN1
+       PZ=PZ+PIN*CT+PAFM*CTN1
+       PP=SQRT(PX**2+PY**2+PZ**2)
+C       PRINT *,'  befor an  ETOT,PX,PY,PZ PP',ETOT,PX,PY,PZ,PP
+C
+       IDCH=ICH+2
+       GO TO(20,30,40,50),IDCH
+C                         ICH=-1             AP - N-N   
+ 20    call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 22 I=1,NL2NN
+      IF(TEMP1-BRENN(I)) 23,22,22
+ 22   CONTINUE
+ 23   IK=I
+C
+      NN=0
+ 200  AMM=0.
+      NP=0
+      NN=NN+1
+      DO 24 IJ=1,6
+      NUM=IRENN(IJ,IK)
+      IF(NUM.EQ.0) GO TO 25
+      NP=IJ
+      MTEMP=MV+IJ
+      IME(8,MTEMP)=NUM
+      AMASS(IJ)=AMREZ(NUM)
+      AMM=AMM+AMASS(IJ)
+  24  CONTINUE
+  25  CONTINUE
+      IF(NN.GT.100) GO TO 10
+      IF(AMM.GT.2.82) GO TO 200
+      APNN=APNN+1.
+      GO TO 13
+C      
+C                         ICH=0              AP - N-P    
+ 30   call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 32 I=1,NL2NP
+      IF(TEMP1-BRENP(I)) 33,32,32
+ 32   CONTINUE
+ 33   IK=I
+C
+      NN=0
+ 300  AMM=0.
+      NP=0
+      NN=NN+1
+      DO 34 IJ=1,6
+      NUM=IRENP(IJ,IK)
+      IF(NUM.EQ.0) GO TO 35
+      NP=IJ
+      MTEMP=MV+IJ
+      IME(8,MTEMP)=NUM
+      AMASS(IJ)=AMREZ(NUM)
+      AMM=AMM+AMASS(IJ)
+  34  CONTINUE
+  35  CONTINUE
+      IF(NN.GT.100) GO TO 10
+      IF(AMM.GT.2.82) GO TO 300
+      APNP=APNP+1.
+      GO TO 13
+C
+C                          ICH=1              AP - P-P   
+ 40   call ranmar(vran,1)
+      TEMP1=vran(1)
+      DO 42 I=1,NL2PP
+      IF(TEMP1-BREPP(I)) 43,42,42
+ 42   CONTINUE
+ 43   IK=I
+C
+      NN=0
+ 400  AMM=0.
+      NP=0
+      NN=NN+1
+      DO 45 IJ=1,6
+      NUM=IREPP(IJ,IK)
+      IF(NUM.EQ.0) GO TO 45
+      NP=IJ
+      MTEMP=MV+IJ
+      IME(8,MTEMP)=NUM
+      AMASS(IJ)=AMREZ(NUM)
+      AMM=AMM+AMASS(IJ)
+  44  CONTINUE
+  45  CONTINUE
+      IF(NN.GT.100) GO TO 10
+      IF(AMM.GT.2.82) GO TO 400
+      APPP=APPP+1.
+      GO TO 13
+C     ICH=2              AN - P-P   
+ 50   PRINT *,'      ICH=2'
+      RETURN
+C
+C
+  13  DO 7 IW=1,150
+      WEIGHT(IW)=1.0   
+  7   CONTINUE   
+      PRM=PARTIN(9)
+      TARGM=TMS
+      PBM=SQRT(TIN1*(TIN1+2.*PRM))
+      E=SQRT(PBM**2+PRM**2)
+      ECMS=TARGM**2+PRM**2+2.0*TARGM*E
+      TECM=SQRT(ECMS)
+      ETA=PBM/TECM 
+      GAM=(E+TARGM)/TECM
+      KAJBYK =0
+      CALL GENEV
+      PX=0.
+      PY=0.
+      PZ=0.
+      ETOT=0.
+C
+      DO 9 IJ=1,NP
+      MTEMP=MV+IJ
+      NUM=IME(8,MTEMP)
+C
+      AM=AMASS(IJ)
+      PL(1)=PCM(1,IJ)
+      PL(2)=PCM(2,IJ)
+      PL(3)=PCM(3,IJ)
+      CALL CINEMA(PL,V,
+     *         PAKV,CT,ST,CFI,SFI,TL,AM)
+C      
+      PX=PX+PAKV(1)
+      PY=PY+PAKV(2)
+      PZ=PZ+PAKV(3)
+C
+      PME(1,MTEMP)=PARTIN(1)
+      PME(2,MTEMP)=PARTIN(2)
+      PME(3,MTEMP)=PARTIN(3)
+      PME(4,MTEMP)=ST
+      PME(5,MTEMP)=CT
+      PME(6,MTEMP)=SFI
+      PME(7,MTEMP)=CFI
+      PME(8,MTEMP)=TL
+      PME(9,MTEMP)=AM
+      IME(1,MTEMP)=IQ(NUM)
+      IME(2,MTEMP)=0
+      IME(3,MTEMP)=IS(NUM)
+      IME(4,MTEMP)=IB(NUM)
+      IME(5,MTEMP)=IPATNE(5)
+      IME(6,MTEMP)=ISTAB(NUM,TL,AM,PAKV)
+      IME(7,MTEMP)=1
+      IF(IME(4,MTEMP)-1)   16,14,16
+  14  J=MIN0(IPATNE(5),IPA1(5))   
+      TEMP=IME(1,MTEMP)
+      IF(PME(8,MTEMP)-TFP(J)*TEMP-TFN(J)*(1.-TEMP)) 21,21,16 
+ 16   IF(NUM.EQ. 8) NET=NET+1
+      IF(NUM.EQ.17) NOM=NOM+1
+C      IF(NUM.EQ. 8) IME(9,MTEMP)=NET
+C      IF(NUM.EQ.17) IME(9,MTEMP)=NOM
+      ETOT=ETOT+PME(8,MTEMP)+PME(9,MTEMP)
+   9  CONTINUE  
+      PP=SQRT(PX**2+PY**2+PZ**2) 
+      MV=MV+NP
+      NNABS=1
+      RETURN
+  21  IF(NC.GT.1000) RETURN
+      GO TO 10     
+      END
+
+
+      SUBROUTINE REZ2PI(PARTIN,IPATIN,IPATNE,TIN1,MV,ND,NIN)
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+     */BEAM/PRM,TARGM,PBM,ETA,GAM,DPBM
+     */KAJBYK/KAJBYK,A(18),UCUT(18),BCUT(18),NN
+     */MEMORY/PME(9,100),IME(9,100)
+     */BLNUCL/ ANUCL,ZNUCL,EPS,VPI,N,RSM,RBIG,RHOP,RHON,AF,TFP,TFN
+      DIMENSION RSM(10),RBIG(10),RHOP(10),RHON(10),
+     *TFP(10),TFN(10),AF(10)
+      DIMENSION PARTIN(9),IPATIN(9),IPATNE(5)
+C
+      real vran(1)
+
+       NP=3
+       ND=NP
+       ICH=IPATIN(1)+IPATNE(1)
+C
+      call ranmar(vran,1)
+      TEMP=vran(1)
+      IF(TEMP-0.4) 1,1,4
+C
+  1   IME(8,MV+1)=1
+      AMASS(1)=AMREZ(1)
+      IME(8,MV+2)=2
+      AMASS(2)=AMREZ(2)
+      IF(ICH) 2,2,3
+  2   IME(8,MV+3)=38
+      AMASS(3)=AMREZ(38)
+      GO TO 30
+  3   IME(8,MV+3)=37
+      AMASS(3)=AMREZ(37)
+      GO TO 30
+C
+  4   IF(TEMP-0.8) 5,5,8
+C
+  5   IME(8,MV+1)=7
+      AMASS(1)=AMREZ(7)
+      IF(ICH) 6,6,7
+  6   IME(8,MV+2)=2
+      AMASS(2)=AMREZ(2)
+      IME(8,MV+3)=37
+      AMASS(3)=AMREZ(37)
+      GO TO 30
+  7   IME(8,MV+2)=1
+      AMASS(2)=AMREZ(1)
+      IME(8,MV+3)=38
+      AMASS(3)=AMREZ(38)
+      GO TO 30
+C
+  8   IME(8,MV+1)=7
+      AMASS(1)=AMREZ(7)
+      IME(8,MV+2)=7
+      AMASS(2)=AMREZ(7)
+      IF(ICH) 9,9,10
+  9   IME(8,MV+3)=38
+      AMASS(3)=AMREZ(38)
+      GO TO 30
+  10  IME(8,MV+3)=37
+      AMASS(3)=AMREZ(37)
+      GO TO 30
+C
+  30  PRM=PARTIN(9)
+      TARGM=0.94
+      PBM=SQRT(TIN1*(TIN1+2.*PRM))
+      E=SQRT(PBM**2+PRM**2)
+      ECMS=TARGM**2+PRM**2+2.0*TARGM*E
+      TECM=SQRT(ECMS)
+      ETA=PBM/TECM
+      GAM=(E+TARGM)/TECM
+      KAJBYK =0
+      CALL GENEV
+C
+      DO 40 IJ=1,NP
+      NUM=IME(8,MV+IJ)
+      PME(1,MV+IJ)=PCM(1,IJ)
+      PME(2,MV+IJ)=PCM(2,IJ)
+      PME(3,MV+IJ)=PCM(3,IJ)
+      PME(4,MV+IJ)=PCM(4,IJ)
+      PME(9,MV+IJ)=AMASS(IJ)
+      IME(1,MV+IJ)=IQ(NUM)
+      IME(2,MV+IJ)=0
+      IME(3,MV+IJ)=IS(NUM)
+      IME(4,MV+IJ)=IB(NUM)
+  40  CONTINUE
+      NIN=1
+      RETURN
+      END
+
+
+      SUBROUTINE DECRES(PIN,IIN,MV,NP,V)
+      COMMON/MEMORY/PME(9,100),IME(9,100)
+     */NCASCA/NCAS,NCPRI
+     */PAUP/ETOT,PX,PY,PZ
+      DIMENSION IKR(3),PXR(3),PYR(3),PZR(3),PIN(9),
+     *IIN(9),V(3)
+      REAL*8 PXR,PYR,PZR,MAR
+C
+      MAR=PIN(9)
+      ER=PIN(8)+PIN(9)
+      P=SQRT(PIN(8)*(PIN(8)+2.*PIN(9)))
+      PX=P*PIN(4)*PIN(7)
+      PY=P*PIN(4)*PIN(6)
+      PZ=P*PIN(5)
+C
+      V(1)=PX/ER
+      V(2)=PY/ER
+      V(3)=PZ/ER
+C
+      NUR=IIN(8)
+      IF(NUR.EQ.17) GO TO 1
+      CALL DECAY(MAR,NUR,IKR,PXR,PYR,PZR,NP)
+      GO TO 2
+  1   CALL DECOME(MAR,NUR,IKR,PXR,PYR,PZR,NP)
+      GO TO 2
+C
+  2   DO  14  K=1,NP
+      JPR=IKR(K)
+      M=MV+K
+      AM=AMAS(JPR)
+      PME(1,M)=PXR(K)
+      PME(2,M)=PYR(K)
+      PME(3,M)=PZR(K)
+      PME(9,M)=AM
+      IME(8,M)=JPR
+      IF(JPR.EQ.55) GO TO 11
+      IME(1,M)=IQ(JPR)
+      IME(2,M)=0
+      IME(3,M)=IS(JPR)
+      IME(4,M)=IB(JPR)
+      GO TO 14
+  11  IME(1,M)=0
+      IME(2,M)=1
+      IME(3,M)=0
+      IME(4,M)=0
+   14 CONTINUE
+      IF(NP.NE.2) GO TO 17
+        DO I=1,9
+           PME(I,MV+3)=PME(I,MV+2)
+           IME(I,MV+3)=IME(I,MV+2)
+        END DO
+   17 RETURN
+      END
+
+
+
+      SUBROUTINE DECETA(MAR,NUR,IKR,PXR,PYR,PZR,ND)
+C   DECAY OF ETA
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+      COMMON/BEAM/PRM,TARGM,PBM,ETA,GAM,DPBM
+      COMMON/KAJBYK/KAJBYK,A(18),UCUT(18),BCUT(18),NN
+      DIMENSION IKR(3),PXR(3),PYR(3),PZR(3)
+      REAL*8 MAR,PXR,PYR,PZR
+
+      real vran(1)
+
+      PRM=MAR
+      PBM=0.
+      TARGM=0.0
+C
+      E=SQRT(PBM**2+PRM**2)
+      ECMS=TARGM**2+PRM**2+2.0*TARGM*E
+      TECM=SQRT(ECMS)
+      ETA=PBM/TECM
+      GAM=(E+TARGM)/TECM
+      KAJBYK=0
+      call ranmar(vran,1)
+        TEMP=vran(1)
+        IF(TEMP-0.39) 1,2,2
+C   GAMMA
+  1     NP=2
+        IKR(1)=55
+        IKR(2)=55
+        AMASS(1)=0.
+        AMASS(2)=0.
+        GO TO 7
+  2     IF(TEMP-0.71) 3,4,4
+  3     NP=3
+        IKR(1)=7
+        IKR(2)=7
+        IKR(3)=7
+        AMASS(1)=AMAS(7)
+        AMASS(2)=AMAS(7)
+        AMASS(3)=AMAS(7)
+        GO TO 7
+  4     IF(TEMP-0.95) 5,6,6
+  5     NP=3
+        IKR(1)=1
+        IKR(2)=2
+        IKR(3)=7
+        AMASS(1)=AMAS(1)
+        AMASS(2)=AMAS(2)
+        AMASS(3)=AMAS(7)
+        GO TO 7
+  6     NP=3
+        IKR(1)=1
+        IKR(2)=2
+        IKR(3)=55
+        AMASS(1)=AMAS(1)
+        AMASS(2)=AMAS(2)
+        AMASS(3)=0.00
+        GO TO 7
+   7    CALL GENEV
+C
+      DO 8 IJ=1,NP
+      PXR(IJ)=PCM(1,IJ)
+      PYR(IJ)=PCM(2,IJ)
+      PZR(IJ)=PCM(3,IJ)
+  8   CONTINUE
+      ND=NP
+      RETURN
+      END
+
+
+      SUBROUTINE DECOME(MAR,NUR,IKR,PXR,PYR,PZR,ND)
+C   DECAY OF OMEGA
+      COMMON/UTIL/PLACE(150),WEIGHT(150),NP,TECM,AMASS(18),PCM(5,18),WT
+      COMMON/BEAM/PRM,TARGM,PBM,ETA,GAM,DPBM
+      COMMON/KAJBYK/KAJBYK,A(18),UCUT(18),BCUT(18),NN
+      DIMENSION IKR(3),PXR(3),PYR(3),PZR(3)
+      REAL*8 MAR,PXR,PYR,PZR
+
+      real vran(1)
+
+      PRM=MAR
+      PBM=0.
+      TARGM=0.0
+C
+      E=SQRT(PBM**2+PRM**2)
+      ECMS=TARGM**2+PRM**2+2.0*TARGM*E
+      TECM=SQRT(ECMS)
+      ETA=PBM/TECM
+      GAM=(E+TARGM)/TECM
+      KAJBYK=0
+      call ranmar(vran,1)
+        TEMP=vran(1)
+        IF(TEMP-0.022) 1,2,2
+C   GAMMA
+  1     NP=2
+        IKR(1)=1
+        IKR(2)=2
+        AMASS(1)=AMAS(1)
+        AMASS(2)=AMAS(2)
+        GO TO 7
+  2     IF(TEMP-0.109) 3,4,4
+  3     NP=2
+        IKR(1)=7
+        IKR(2)=55
+        AMASS(1)=AMAS(7)
+        AMASS(2)=0.0
+        GO TO 7
+  4     NP=3
+        IKR(1)=1
+        IKR(2)=2
+        IKR(3)=7
+        AMASS(1)=AMAS(1)
+        AMASS(2)=AMAS(2)
+        AMASS(3)=AMAS(7)
+        GO TO 7
+   7    CALL GENEV
+C
+      DO 8 IJ=1,NP
+      PXR(IJ)=PCM(1,IJ)
+      PYR(IJ)=PCM(2,IJ)
+      PZR(IJ)=PCM(3,IJ)
+  8   CONTINUE
+      ND=NP
+      RETURN
+      END
+

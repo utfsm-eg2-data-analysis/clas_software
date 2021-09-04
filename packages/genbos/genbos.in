@@ -1,0 +1,21 @@
+ -------------------------------------------------------------------------
+           2|   I12  | ICIBLE=0 neutron; =1 proton                       |
+	    |        |       =2 deuteron            as a target          |
+           2|   I12  | IBEAM=0, gaussian, =2 Bremsstrahlung =3 uniform   |
+    2.000   |  F12.3 | ETAG, mean gamma energy (GeV)                     |
+    0.300   |  F12.3 | FWHM,  width of gamma energy distribution (GeV)   |
+  .false.   |   L12  | CMSF, momenta in CMS (true) or in LAB. (false)    |
+      0     |   I12  | TARGTYPE=0 point,=1 cyl.,=2 cuivre,=3 cigare      |
+    2.0     |  F12.3 | TARG_R  target radius (cm)                        |
+   10.0     |  F12.3 | TARG_L  total target length (cm)                  |
+  ----------|  40I3  | ICHAIN number of ch. to be included (next 2 lines)|
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20
+21 22 23 24 25 26 27 28 33 34 35 00 00 00 00 00 00 00 00 00
+ ------------------------ end of ICHAIN ----------------------------------
+       00100|   I12  | NSTATIS total number of events                    |
+       10065|   I12  | IX             INITIAL SEED VALUE                 |
+  .false.   |   L12  | NO_NT_OUT  no rzn out file                        |
+  .false.   |   L12  | NO_BOS_OUT  no bos out file                       |
+ -------------------------------------------------------------------------
+
+

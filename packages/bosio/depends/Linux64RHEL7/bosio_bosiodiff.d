@@ -1,0 +1,2 @@
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/bosiodiff.o /user/a/alaoui/software/clas_software_ver1/slib/Linux64RHEL7/bosio_bosiodiff.o ./depends/Linux64RHEL7/bosio_bosiodiff.d: bosiodiff.c
+/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/bosiodiff_debug.o /user/a/alaoui/software/clas_software_ver1/slib/Linux64RHEL7/bosio_bosiodiff_debug.o ./depends/Linux64RHEL7/bosio_bosiodiff.d: bosiodiff.c
