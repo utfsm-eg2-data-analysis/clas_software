@@ -2,13 +2,13 @@
 //
 //   File Fill_GSIM_Bank.cc
 //
-//   This procedure Fills TEVNTClass class from BOS Bank 
+//   This procedure Fills TEVNTClass class from BOS Bank
 //
 //  Author :  Gagik Gavalian   UNH  11/10/1999
 //
 //
-//  This file was automaticaly Generated on : 
-//	Tue Nov 23 18:21:36 EST 1999 
+//  This file was automaticaly Generated on :
+//	Tue Nov 23 18:21:36 EST 1999
 //////////////////////////////////////////////////////////////
 
 
@@ -27,7 +27,7 @@ void  Fill_GSIM_Bank(TGSIMClass *gcGSIM,MCTK *pMCTK, MCVX *pMCVX , int nrow){
 
   Int_t vertex_num = pMCTK->get_beg_vtx(nrow);
   if( pMCTK->get_end_vtx(nrow) == 0){
-    gcGSIM->Status  = 1; 
+    gcGSIM->Status  = 1;
   }else{                    // This was not a final track, it decayed...
     gcGSIM->Status  = 0;
   }
@@ -37,17 +37,17 @@ void  Fill_GSIM_Bank(TGSIMClass *gcGSIM,MCTK *pMCTK, MCVX *pMCVX , int nrow){
   gcGSIM->Charge  = (Char_t)pMCTK->get_charge(nrow);
 
   if(  pMCTK->get_pmom(nrow) > 0.0 ) {
-    gcGSIM->Betta  =  pMCTK->get_pmom(nrow) / 
+    gcGSIM->Betta  =  pMCTK->get_pmom(nrow) /
       sqrt( pow( pMCTK->get_pmom(nrow), 2 ) + pow( pMCTK->get_mass(nrow) , 2) ) ;
   } else {
     gcGSIM->Betta  = 0;
   }
-    
+
   gcGSIM->Px  = pMCTK->get_cx(nrow) * pMCTK->get_pmom(nrow);
   gcGSIM->Py  = pMCTK->get_cy(nrow) * pMCTK->get_pmom(nrow);
   gcGSIM->Pz  = pMCTK->get_cz(nrow) * pMCTK->get_pmom(nrow);
-  if(vertex_num<1 || vertex_num > pMCVX->get_nrows()){ // OOPS, not a good vertex.    
-    gcGSIM->Status  = 0;    
+  if(vertex_num<1 || vertex_num > pMCVX->get_nrows()){ // OOPS, not a good vertex.
+    gcGSIM->Status  = 0;
     gcGSIM->X  = 0;
     gcGSIM->Y  = 0;
     gcGSIM->Z  = 0;
@@ -73,9 +73,9 @@ void  Fill_GSIM_Bank(TGSIMClass *gcGSIM, PART *pPART , int nrow){
   gcGSIM->Charge  = (Char_t) pPART->get_q(nrow);
   //  gcGSIM->Betta  =  0;// pPART->get_Betta(nrow);
   if( pPART->get_E(nrow) > 0 ) {
-    gcGSIM->Betta  =  sqrt( pow(  pPART->get_px(nrow), 2 ) + 
-			    pow(  pPART->get_py(nrow), 2 ) + 
-			    pow(  pPART->get_pz(nrow), 2 ) ) / 
+    gcGSIM->Betta  =  sqrt( pow(  pPART->get_px(nrow), 2 ) +
+			    pow(  pPART->get_py(nrow), 2 ) +
+			    pow(  pPART->get_pz(nrow), 2 ) ) /
       pPART->get_E(nrow);
   } else {
     gcGSIM->Betta = 0;
@@ -92,7 +92,7 @@ void  Fill_GSIM_Bank(TGSIMClass *gcGSIM, PART *pPART , int nrow){
   gcGSIM->Ecstat  = 0;//(UChar_t) pPART->get_ECstat(nrow);
   gcGSIM->Lcstat  = 0;//(UChar_t) pPART->get_LCstat(nrow);
   gcGSIM->Ststat  = 0;// gcGSIM->Ststat  = (UChar_t) pPART->get_STstat(nrow);
-  gcGSIM->Status  = 1;// (UChar_t) pPART->get_Status(nrow);  
+  gcGSIM->Status  = pPART->get_qpid(nrow); // (UChar_t) pPART->get_Status(nrow); // borquez edit
 }
 
 void  Fill_GSIM_Bank(TGSIMClass *gcGSIM, tree_str *pPART , int nrow){
@@ -121,7 +121,7 @@ void  Fill_GSIM_Bank(TGSIMClass *gcGSIM, tree_str *pPART , int nrow){
   gcGSIM->Ecstat  = 0;//(UChar_t) pPART->get_ECstat(nrow);
   gcGSIM->Lcstat  = 0;//(UChar_t) pPART->get_LCstat(nrow);
   gcGSIM->Ststat  = 0;// gcGSIM->Ststat  = (UChar_t) pPART->get_STstat(nrow);
-  gcGSIM->Status  = 1;// (UChar_t) pPART->get_Status(nrow);  
+  gcGSIM->Status  = 1;// (UChar_t) pPART->get_Status(nrow);
 }
 
 

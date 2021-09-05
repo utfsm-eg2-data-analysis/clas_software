@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////
-// File TVirtualData.h  
+// File TVirtualData.h
 //
 // Initial Author: Maurik Holtrop  UNH  11/28/01
 //
@@ -7,8 +7,8 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef _TVirtualData_ 
-#define _TVirtualData_ 
+#ifndef _TVirtualData_
+#define _TVirtualData_
 #include <iostream>
 using namespace std;
 #include "TObject.h"
@@ -20,9 +20,9 @@ using namespace std;
 
 
 class TVirtualData: public TObject{
-  
+
  public:
-  Int_t     Id;     //-> Particle Data Group ID (from SEB) 
+  Int_t     Id;     //-> Particle Data Group ID (from SEB)
   Char_t    Charge; //-> charge (from tracking)
   Float_t   Betta;  //-> Particle velocity in the units of c (=R_trk/TOF/c)
   Float_t   Px;     //-> Momentum Vector X component.
@@ -33,11 +33,11 @@ class TVirtualData: public TObject{
   Float_t   Z;      //-> "Vertex" Vector Z component. The vertex is actually a projection onto a plane.
   Char_t    Dcstat; //-> Index into the TDCPBClass array.
   Char_t    Ccstat; //-> Index into the TCCPBClass array.
-  Char_t    Scstat; //-> Index into the TSCPBClass array. 
+  Char_t    Scstat; //-> Index into the TSCPBClass array.
   Char_t    Ecstat; //-> Index into the TECPBClass array.
   Char_t    Lcstat; //-> Index into the TLCPBClass array.
   Char_t    Ststat; //-> Index into the TSTPBClass array.
-  Char_t    Status; //-> Status word (=0 for out of time particle)
+  Int_t     Status; //-> Status word (=0 for out of time particle) // borquez edit
  public:
   TVirtualData(){};
   TVirtualData(TVirtualData *TmpEVNT);
@@ -79,5 +79,5 @@ class TVirtualData: public TObject{
    };
 
 #endif
-    
+
 
