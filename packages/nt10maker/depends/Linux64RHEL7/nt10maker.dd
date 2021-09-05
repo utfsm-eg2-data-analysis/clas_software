@@ -1,2 +1,0 @@
-./depends/Linux64RHEL7/.dd /user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/.o:  ../include/bosddl.h ../include/clas_cern.h ../include/utility.h \
- ../include/makebanks.h ../include/trip.h ../include/vertex.h

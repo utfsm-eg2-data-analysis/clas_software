@@ -1,1 +1,0 @@
-/user/a/alaoui/software/clas_software_ver1/lib/Linux64RHEL7/libtrk.a(trk_calc_wire_mod.o) ./depends/Linux64RHEL7/trk_calc_wire_mod.d:  ../include/bcs.inc ../include/wcs.inc ../inc_derived/clas_offsets.inc
